@@ -127,9 +127,11 @@
     /* Loss / cost figure — red, copy only. */
     .loss { color: var(--red); font-weight: 700; }
 
-    /* ── HERO ── (fits within one viewport; modest breathing room before SCROLL) */
-    /* padding-top/bottom only — never shorthand — so .wrap's horizontal padding survives on mobile. */
-    .hero { padding-top: 96px; padding-bottom: 48px; }
+    /* ── HERO ── (fills the viewport; the first section sits just below the fold) */
+    /* Flex column so the SCROLL cue pins near the bottom and section 01 starts just
+       past the fold on any viewport height. padding-top/bottom only — never shorthand —
+       so .wrap's horizontal padding survives on mobile. */
+    .hero { display: flex; flex-direction: column; min-height: 100vh; padding-top: 96px; padding-bottom: clamp(52px, 7vh, 104px); }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 9px;
       font-size: 0.64rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
@@ -159,8 +161,9 @@
     }
     .proof-bar .hl { font-weight: 800; }
 
-    /* Scroll cue — animated green bar + SCROLL, nothing else. */
-    .scroll-cue { margin-top: 64px; display: inline-flex; align-items: center; gap: 13px; }
+    /* Scroll cue — animated green bar + SCROLL, nothing else. Pinned toward the bottom
+       of the hero (margin-top:auto) with a guaranteed minimum gap above it. */
+    .scroll-cue { margin-top: auto; padding-top: clamp(64px, 12vh, 150px); display: inline-flex; align-items: center; gap: 13px; }
     .scroll-cue .bar { position: relative; width: 3px; height: 42px; background: rgba(180,255,0,0.16); border-radius: 3px; overflow: hidden; }
     .scroll-cue .bar::after {
       content: ''; position: absolute; left: 0; right: 0; top: 0; height: 45%;
@@ -183,18 +186,19 @@
     @keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
     /* ── PER-SECTION GREEN GLOW ──
-       Strongest at the top of each section, fading toward the bottom. Uneven on
-       purpose (varied position + intensity) so the four don't read flat. The
-       glow is translucent, so the grid texture stays visible through it. */
+       A soft blob per section that fades out smoothly in every direction (no hard
+       top edge, no banding). Offset + intensity vary so the four don't read flat,
+       and neighbouring glows overlap so the green flows down the page. The glow is
+       translucent, so the grid texture stays visible through it. */
     .cyc-section, .p4 { position: relative; }
     .cyc-section::before, .p4::before {
-      content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-      width: 150%; height: 72%; max-height: 720px; z-index: 0; pointer-events: none;
+      content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 135%; height: 130%; z-index: 0; pointer-events: none;
     }
-    .cyc-section[data-sec="1"]::before { background: radial-gradient(58% 100% at 50% 0%, rgba(180,255,0,0.13), transparent 70%); }
-    .cyc-section[data-sec="2"]::before { background: radial-gradient(52% 100% at 40% 0%, rgba(180,255,0,0.06), transparent 68%); }
-    .cyc-section[data-sec="3"]::before { background: radial-gradient(58% 100% at 60% 0%, rgba(180,255,0,0.10), transparent 70%); }
-    .p4::before                        { background: radial-gradient(58% 100% at 50% 0%, rgba(180,255,0,0.07), transparent 70%); }
+    .cyc-section[data-sec="1"]::before { background: radial-gradient(45% 45% at 44% 42%, rgba(180,255,0,0.12), transparent 72%); }
+    .cyc-section[data-sec="2"]::before { background: radial-gradient(46% 46% at 62% 52%, rgba(180,255,0,0.06), transparent 72%); }
+    .cyc-section[data-sec="3"]::before { background: radial-gradient(46% 46% at 38% 46%, rgba(180,255,0,0.09), transparent 72%); }
+    .p4::before                        { background: radial-gradient(46% 46% at 56% 44%, rgba(180,255,0,0.06), transparent 72%); }
     /* Keep section content above the glow. */
     .sec-head, .panel, .mtoggle, .p4-head, .p4-solo, .case { position: relative; z-index: 1; }
 
@@ -222,8 +226,7 @@
     .mtoggle { display: none; }
 
     /* ── PANEL SHELL ── */
-    .panel { padding: 26px 0 56px; border-bottom: 1px solid var(--hair); }
-    .cyc-section:last-of-type .panel { border-bottom: none; }
+    .panel { padding: 26px 0 56px; }
     .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
     .side { display: flex; flex-direction: column; }
     .side-tag {
@@ -563,12 +566,21 @@
       }
       .pill {
         flex: 1; border: none; background: transparent; color: var(--text-faint);
-        font-family: inherit; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.01em;
+        font-family: inherit; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.01em;
         padding: 9px 10px; border-radius: 100px; cursor: pointer; white-space: nowrap;
         overflow: hidden; text-overflow: ellipsis;
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px;
         transition: background var(--d-micro) var(--ease), color var(--d-micro) var(--ease);
       }
-      .pill.active { background: var(--lime); color: #000; }
+      /* Small status dot per pill: red = "your setup now" (before), green = "once it's fixed". */
+      .pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+      .pill[data-side="left"]::before  { background: var(--red); }
+      .pill[data-side="right"]::before { background: var(--lime); }
+      /* Active "your setup now" → red background; active "once it's fixed" → green. */
+      .pill.active[data-side="left"]  { background: var(--red);  color: #fff; }
+      .pill.active[data-side="right"] { background: var(--lime); color: #000; }
+      .pill.active[data-side="left"]::before  { background: #fff; }
+      .pill.active[data-side="right"]::before { background: #000; }
 
       /* Overlap both sides in a single grid cell → cell height = the taller of the two,
          so toggling never shifts layout. Crossfade only; no slide, no reflow. */
@@ -894,22 +906,22 @@
           eyebrow: '01 · ENQUIRY HANDLING',
           headline: 'Whoever replied first got him. It wasn’t you.',
           line: 'Reply in five minutes instead of thirty and you’re **21x more likely** to sign them.',
-          a: { pill: 'Now', sub: 'Two days later.', cap: 'He enquired at 11pm and by the time anyone replied, he’d joined the place down the road.' },
-          b: { pill: 'Fixed', sub: 'Ninety seconds.', cap: 'Answered, questions handled, **booked in** — before he put his phone down.' }
+          a: { pill: 'Your setup now', sub: 'Two days later.', cap: 'He enquired at 11pm and by the time anyone replied, he’d joined the place down the road.' },
+          b: { pill: 'Once it’s fixed', sub: 'Ninety seconds.', cap: 'Answered, questions handled, **booked in** — before he put his phone down.' }
         },
         {
           eyebrow: '02 · THE BOOKED TRIAL',
           headline: 'Just because they booked doesn’t mean they’re coming.',
           line: 'One reminder cuts no-shows by **38%**. The other half never come because nobody told them what to expect.',
-          a: { pill: 'Now', sub: 'Booked, then forgotten.', cap: 'Eight days of silence, no reminder, and no one to ask what to wear or whether he’d be the only beginner.' },
-          b: { pill: 'Fixed', sub: 'Reminded and reassured.', cap: 'A message the night before answering what he was too embarrassed to ask, and **a thumbs up back.**' }
+          a: { pill: 'Your setup now', sub: 'Booked, then forgotten.', cap: 'Eight days of silence, no reminder, and no one to ask what to wear or whether he’d be the only beginner.' },
+          b: { pill: 'Once it’s fixed', sub: 'Reminded and reassured.', cap: 'A message the night before answering what he was too embarrassed to ask, and **a thumbs up back.**' }
         },
         {
           eyebrow: '03 · NO CLEAR SALES PROCESS',
           headline: 'He enjoyed his first session. Then nothing happened.',
           line: 'A clear sales process, a joining offer on the night, and a follow-up if he goes quiet is the difference between a good session and **a member.**',
-          a: { pill: 'Now', sub: 'Sat there for 18 days.', cap: 'Someone probably asked how he found it, but no follow-up went out, no offer was made, and nothing was ever sent.' },
-          b: { pill: 'Fixed', sub: 'Asked the same night.', cap: 'The ask goes out that evening with a first-month offer, a follow-up if he goes quiet, and **a rebook if he no-shows.**' }
+          a: { pill: 'Your setup now', sub: 'Sat there for 18 days.', cap: 'Someone probably asked how he found it, but no follow-up went out, no offer was made, and nothing was ever sent.' },
+          b: { pill: 'Once it’s fixed', sub: 'Asked the same night.', cap: 'The ask goes out that evening with a first-month offer, a follow-up if he goes quiet, and **a rebook if he no-shows.**' }
         },
         {
           eyebrow: '04 · YOUR WEBSITE, RIGHT NOW',
