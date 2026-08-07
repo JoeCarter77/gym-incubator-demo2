@@ -112,8 +112,20 @@
     .progress-seg.active .pnum { color: var(--lime); }
     .progress-seg.done .pnum { color: var(--text-faint); }
 
+    /* ══════════════════════════════════════════════════════════════════════
+       COLOUR RULES — do not break these in future sessions.
+       RED (--red) is only ever loss or the "before" state. Permitted: cost
+       figures in copy (.loss), the "Your setup now" dot, NO SHOW / No contact /
+       No follow-up labels in the CRM mock, the before-panel status labels.
+       Never on a heading, never on an eyebrow, never decorative.
+       GREEN (--lime) marks the fix: section eyebrows, "Once it's fixed",
+       signed/attended states, the scroll indicator, the progress bars.
+       Red anywhere neutral stops reading as a warning and flattens the system.
+       ══════════════════════════════════════════════════════════════════════ */
     /* Sparse green accent — one glowing phrase per block. */
     .hl { color: var(--lime); font-weight: 600; }
+    /* Loss / cost figure — red, copy only. */
+    .loss { color: var(--red); font-weight: 700; }
 
     /* ── HERO ── (fits within one viewport; modest breathing room before SCROLL) */
     /* padding-top/bottom only — never shorthand — so .wrap's horizontal padding survives on mobile. */
@@ -122,10 +134,12 @@
       display: inline-flex; align-items: center; gap: 9px;
       font-size: 0.64rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--text-dim);
-      border: 1px solid var(--border); border-radius: 100px;
+      border: 1px solid var(--lime-bd); border-radius: 100px;
       padding: 7px 15px 7px 13px; margin-bottom: 26px;
+      /* Subtle green glow — this element only (not the proof line, not the H1). */
+      box-shadow: 0 0 22px rgba(180,255,0,0.18), inset 0 0 12px rgba(180,255,0,0.04);
     }
-    .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-faint); }
+    .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px var(--lime); }
     .hero h1 {
       font-size: clamp(2.3rem, 5.6vw, 4.1rem); font-weight: 800; line-height: 1.03;
       letter-spacing: -0.04em; max-width: 18ch;
@@ -136,13 +150,14 @@
     }
     .hero .subhead strong { color: var(--text); font-weight: 500; }
 
-    /* Proof bar — very top of the hero, own row, small and boxed, green only on the number. */
+    /* Proof line — plain centred text at the very top of the hero. No pill, no border,
+       no background. Green on the number only. */
     .proof-bar {
-      display: flex; width: fit-content; max-width: 100%; align-items: center; margin-bottom: 22px;
-      border: 1px solid var(--border-hi); background: rgba(255,255,255,0.02); border-radius: 100px;
-      padding: 8px 15px; font-size: 0.78rem; font-weight: 400; line-height: 1; color: var(--text-dim);
+      display: block; width: 100%; text-align: center; margin-bottom: 26px;
+      border: none; background: none; padding: 0;
+      font-size: 0.82rem; font-weight: 400; letter-spacing: 0.01em; color: var(--text-dim);
     }
-    .proof-bar .hl { font-weight: 800; margin-right: 6px; }
+    .proof-bar .hl { font-weight: 800; }
 
     /* Scroll cue — animated green bar + SCROLL, nothing else. */
     .scroll-cue { margin-top: 64px; display: inline-flex; align-items: center; gap: 13px; }
@@ -167,12 +182,36 @@
     .hero.play .h-5 { animation-delay: 0.50s; }
     @keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
-    /* ── SECTION HEADER (eyebrow → headline → hard fact) ── */
-    .sec-head { padding: 54px 0 6px; }
-    .sec-eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
-    .sec-headline { margin-top: 16px; font-size: clamp(1.8rem, 3.8vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; max-width: 20ch; }
+    /* ── PER-SECTION GREEN GLOW ──
+       Strongest at the top of each section, fading toward the bottom. Uneven on
+       purpose (varied position + intensity) so the four don't read flat. The
+       glow is translucent, so the grid texture stays visible through it. */
+    .cyc-section, .p4 { position: relative; }
+    .cyc-section::before, .p4::before {
+      content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+      width: 150%; height: 72%; max-height: 720px; z-index: 0; pointer-events: none;
+    }
+    .cyc-section[data-sec="1"]::before { background: radial-gradient(58% 100% at 50% 0%, rgba(180,255,0,0.13), transparent 70%); }
+    .cyc-section[data-sec="2"]::before { background: radial-gradient(52% 100% at 40% 0%, rgba(180,255,0,0.06), transparent 68%); }
+    .cyc-section[data-sec="3"]::before { background: radial-gradient(58% 100% at 60% 0%, rgba(180,255,0,0.10), transparent 70%); }
+    .p4::before                        { background: radial-gradient(58% 100% at 50% 0%, rgba(180,255,0,0.07), transparent 70%); }
+    /* Keep section content above the glow. */
+    .sec-head, .panel, .mtoggle, .p4-head, .p4-solo, .case { position: relative; z-index: 1; }
+
+    /* ── SECTION HEADER (ghost number → eyebrow → headline → hard fact) ── */
+    .sec-head { padding: 62px 0 6px; }
+    /* Ghost section number — very large, faint, sits behind and overlaps the eyebrow. */
+    .ghost-num {
+      position: absolute; left: -0.06em; top: -0.04em; z-index: -1;
+      font-size: clamp(6rem, 15vw, 11rem); font-weight: 900; line-height: 0.8;
+      letter-spacing: -0.05em; color: #ffffff; opacity: 0.045;
+      pointer-events: none; user-select: none; font-variant-numeric: tabular-nums;
+    }
+    /* Green eyebrow label in front of the ghost number. */
+    .sec-eyebrow { position: relative; z-index: 1; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: var(--lime); }
+    .sec-headline { position: relative; z-index: 1; margin-top: 16px; font-size: clamp(1.8rem, 3.8vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; max-width: 20ch; }
     /* Hard fact — slightly larger, muted; sits between headline and panels */
-    .hard-fact { margin-top: 20px; font-size: 1.08rem; font-weight: 300; color: var(--text-dim); line-height: 1.62; max-width: 62ch; }
+    .hard-fact { position: relative; z-index: 1; margin-top: 20px; font-size: 1.08rem; font-weight: 300; color: var(--text-dim); line-height: 1.62; max-width: 62ch; }
 
     /* ── REVEAL PRIMITIVE ── */
     .reveal { opacity: 0; transform: translateY(26px); transition: opacity var(--d-panel) var(--ease), transform var(--d-panel) var(--ease); }
@@ -193,8 +232,9 @@
     }
     .side.left  .side-tag { color: var(--text-faint); }
     .side.right .side-tag { color: var(--text); }
-    .side.right .side-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); flex-shrink: 0; }
-    .side.left  .side-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-ghost); flex-shrink: 0; }
+    /* Green dot = the fix; red dot = the "before" state (permitted red usage). */
+    .side.right .side-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 6px rgba(180,255,0,0.6); flex-shrink: 0; }
+    .side.left  .side-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
 
     /* The frame that holds each panel's live element. Left is quieter. */
     .frame {
@@ -582,6 +622,7 @@
     <!-- SECTION 01 — THE ENQUIRY -->
     <section class="cyc-section" data-sec="1">
       <div class="sec-head reveal">
+        <span class="ghost-num" aria-hidden="true">01</span>
         <div class="sec-eyebrow" id="sec1-eyebrow"></div>
         <h2 class="sec-headline" id="sec1-headline"></h2>
         <p class="hard-fact" id="sec1-fact"></p>
@@ -609,6 +650,7 @@
     <!-- SECTION 02 — THE REMINDER -->
     <section class="cyc-section" data-sec="2">
       <div class="sec-head reveal">
+        <span class="ghost-num" aria-hidden="true">02</span>
         <div class="sec-eyebrow" id="sec2-eyebrow"></div>
         <h2 class="sec-headline" id="sec2-headline"></h2>
         <p class="hard-fact" id="sec2-fact"></p>
@@ -665,6 +707,7 @@
     <!-- SECTION 03 — AFTER THE SESSION -->
     <section class="cyc-section" data-sec="3">
       <div class="sec-head reveal">
+        <span class="ghost-num" aria-hidden="true">03</span>
         <div class="sec-eyebrow" id="sec3-eyebrow"></div>
         <h2 class="sec-headline" id="sec3-headline"></h2>
         <p class="hard-fact" id="sec3-fact"></p>
@@ -739,6 +782,7 @@
   <!-- ══ SECTION 04 — LIVE SITE (single state, no toggle) ══ -->
   <section class="p4 wrap" id="p4">
     <div class="p4-head reveal">
+      <span class="ghost-num" aria-hidden="true">04</span>
       <div class="sec-eyebrow" id="sec4-eyebrow"></div>
       <h2 id="sec4-headline"></h2>
       <p class="hard-fact" id="sec4-fact"></p>
@@ -842,13 +886,13 @@
     //  green accent phrase per block. {{ACADEMY}}/{{FIRST_NAME}} come from the URL.
     const CONTENT = {
       hero: {
-        proof: '**+£70,000** to Nexus BJJ in 90 days.',
-        sub: 'Scroll through, then try the booking assistant on your own site at the bottom.'
+        proof: '**+£70,000** to Nexus BJJ in 90 days',
+        sub: 'The four gaps below run through how you’re probably handling things right now, and what it’s quietly costing you.'
       },
       sections: [
         {
           eyebrow: '01 · ENQUIRY HANDLING',
-          headline: 'They didn’t pick the best academy. They picked the one that answered.',
+          headline: 'Whoever replied first got him. It wasn’t you.',
           line: 'Reply in five minutes instead of thirty and you’re **21x more likely** to sign them.',
           a: { pill: 'Now', sub: 'Two days later.', cap: 'He enquired at 11pm and by the time anyone replied, he’d joined the place down the road.' },
           b: { pill: 'Fixed', sub: 'Ninety seconds.', cap: 'Answered, questions handled, **booked in** — before he put his phone down.' }
@@ -856,14 +900,14 @@
         {
           eyebrow: '02 · THE BOOKED TRIAL',
           headline: 'Just because they booked doesn’t mean they’re coming.',
-          line: 'One reminder cuts no-shows by **38%**, and answering their nerves beforehand does the rest.',
+          line: 'One reminder cuts no-shows by **38%**. The other half never come because nobody told them what to expect.',
           a: { pill: 'Now', sub: 'Booked, then forgotten.', cap: 'Eight days of silence, no reminder, and no one to ask what to wear or whether he’d be the only beginner.' },
           b: { pill: 'Fixed', sub: 'Reminded and reassured.', cap: 'A message the night before answering what he was too embarrassed to ask, and **a thumbs up back.**' }
         },
         {
           eyebrow: '03 · NO CLEAR SALES PROCESS',
-          headline: 'He loved it. Then nothing happened.',
-          line: '20 trials a month at 30% instead of 55% is **five members** you’re leaving behind, every month.',
+          headline: 'He enjoyed his first session. Then nothing happened.',
+          line: 'A clear sales process, a joining offer on the night, and a follow-up if he goes quiet is the difference between a good session and **a member.**',
           a: { pill: 'Now', sub: 'Sat there for 18 days.', cap: 'Someone probably asked how he found it, but no follow-up went out, no offer was made, and nothing was ever sent.' },
           b: { pill: 'Fixed', sub: 'Asked the same night.', cap: 'The ask goes out that evening with a first-month offer, a follow-up if he goes quiet, and **a rebook if he no-shows.**' }
         },
@@ -908,7 +952,9 @@
       const H = CONTENT.hero;
       setHTML('hero-proof', md(H.proof));
       setText('hero-eyebrow', 'MADE FOR ' + (academy || 'YOUR ACADEMY'));
-      setText('hero-h1', firstName ? firstName + ', there are four gaps losing you members.' : 'There are four gaps losing you members.');
+      // £7,000/month renders in red (loss); everything else default.
+      const lead = firstName ? esc(firstName) + ', there' : 'There';
+      setHTML('hero-h1', lead + ' are four gaps losing you members and up to <span class="loss">£7,000/month</span>.');
       setText('hero-sub', H.sub);
       CONTENT.sections.forEach(function (s, idx) {
         const n = idx + 1;
@@ -964,15 +1010,15 @@
     // ── Hero load sequence ──
     requestAnimationFrame(function () { document.getElementById('hero').classList.add('play'); });
 
+    // ── Section 01 chat: fully rendered on mount, no load animation ever ──
+    // (Deferred one tick so the thread data consts below are initialised — avoids TDZ.)
+    setTimeout(function () { playThread('left', true); playThread('right', true); }, 0);
+
     // ── Reveal + once-per-panel triggers ──
-    const fired = {};
+    const fired = { 1: true }; // panel 1 already rendered above
     if (REDUCED) {
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
-      // Defer to next tick so the const thread/data below are initialised (avoid TDZ).
-      setTimeout(function () {
-        playThread('left', true); playThread('right', true);
-        playCalendar(true); playBoard(true);
-      }, 0);
+      setTimeout(function () { playCalendar(true); playBoard(true); }, 0);
     } else {
       const io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -981,7 +1027,6 @@
           const panel = e.target.getAttribute('data-panel');
           if (panel && !fired[panel]) {
             fired[panel] = true;
-            if (panel === '1') { playThread('left', false); playThread('right', false); }
             if (panel === '2') playCalendar(false);
             if (panel === '3') playBoard(false);
           }
@@ -993,10 +1038,10 @@
     }
 
     // ══════════ MOBILE PILL TOGGLE + AUTO-CYCLE ══════════
-    // One panel at a time on mobile. Sequence per section (independent):
-    //   Your setup now (5s) → Once it's fixed (8s) → Your setup now (8s) → alternate at 8s.
-    // Starts the first time the section crosses 55% visible. Pauses under 30%,
-    // resumes from where it paused. A pill tap kills the timer permanently.
+    // One panel at a time on mobile. Sequence per section (independent), one-way:
+    //   Your setup now → after 14s → Once it's fixed, then stop (no return).
+    // Starts the first time the section crosses 55% visible. Pauses under 30% and
+    // resumes with the remaining time preserved. A pill tap kills the timer permanently.
     // prefers-reduced-motion → no auto-cycle; defaults to the left panel; manual toggle only.
     function initToggles() {
       const mq = window.matchMedia('(max-width: 860px)');
