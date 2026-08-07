@@ -14,19 +14,19 @@
   </script>
   <style>
     :root {
-      /* Brand tokens — verified against the live gym-incubator-demo source */
-      --bg:         #0a0a0a;
+      /* Brand tokens */
+      --bg:         #070907;
       --bg-raised:  #141414;
-      --card:       #111111;
-      --card-hi:    #171717;
-      --border:     #202020;
-      --border-hi:  #2a2a2a;
-      --hair:       #1c1c1c;
+      --card:       #101210;
+      --card-hi:    #171917;
+      --border:     #202220;
+      --border-hi:  #2a2c2a;
+      --hair:       #1c1e1c;
 
-      --lime:       #aaff00;
-      --lime-hi:    #c5ff4d;
-      --lime-lo:    rgba(170,255,0,0.08);
-      --lime-bd:    rgba(170,255,0,0.24);
+      --lime:       #b4ff00;
+      --lime-hi:    #c9ff4d;
+      --lime-lo:    rgba(180,255,0,0.08);
+      --lime-bd:    rgba(180,255,0,0.24);
 
       --text:       #ffffff;
       --text-dim:   #9a9a9a;
@@ -50,7 +50,12 @@
     /* Free scroll — no smooth-scroll easing hijack, no snap. Stops wherever the user stops. */
     html { -webkit-text-size-adjust: 100%; }
     body {
-      background: var(--bg);
+      /* Dark gradient — green-tinted radial glow, not flat black. */
+      background:
+        radial-gradient(1200px 760px at 50% -8%, rgba(180,255,0,0.11), transparent 60%),
+        radial-gradient(900px 620px at 88% 4%, rgba(180,255,0,0.05), transparent 55%),
+        var(--bg);
+      background-attachment: fixed;
       color: var(--text);
       font-family: 'Inter', system-ui, sans-serif;
       min-height: 100vh;
@@ -58,13 +63,18 @@
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
-    /* Subtle film grain — the brand background. Global, so it renders on mobile and desktop alike. */
+    /* Faint grid texture overlay — fades out toward the edges so it reads as a subtle backdrop. */
     body::before {
       content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.022;
+      background-image:
+        linear-gradient(rgba(180,255,0,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180,255,0,0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 85%);
+      mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 85%);
+      opacity: 0.6;
     }
-    ::selection { background: rgba(170,255,0,0.22); color: #fff; }
+    ::selection { background: rgba(180,255,0,0.22); color: #fff; }
     a { color: inherit; }
     :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 4px; }
 
@@ -82,8 +92,32 @@
     .wordmark { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text); }
     .header-meta { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
 
+    /* ── FOUR SCROLL-PROGRESS BARS ── (track scroll through each of the four sections) */
+    .progress-rail {
+      position: fixed; top: 58px; left: 0; right: 0; z-index: 150;
+      display: flex; gap: 10px; padding: 12px 32px 16px;
+      background: linear-gradient(to bottom, rgba(7,9,7,0.94) 40%, rgba(7,9,7,0));
+      pointer-events: none;
+    }
+    .progress-seg { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .progress-seg .pnum {
+      font-size: 0.54rem; font-weight: 700; letter-spacing: 0.18em; color: var(--text-ghost);
+      transition: color var(--d-micro) var(--ease);
+    }
+    .progress-seg .ptrack { height: 4px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+    .progress-seg .pfill {
+      height: 100%; width: 0%; background: var(--lime); border-radius: 4px;
+      box-shadow: 0 0 10px rgba(180,255,0,0.65); transition: width 0.1s linear;
+    }
+    .progress-seg.active .pnum { color: var(--lime); }
+    .progress-seg.done .pnum { color: var(--text-faint); }
+
+    /* Sparse green accent — one glowing phrase per block. */
+    .hl { color: var(--lime); font-weight: 600; }
+
     /* ── HERO ── (tightened — no dead space; lower half carries the four-gap grid) */
-    .hero { padding: 84px 0 44px; }
+    /* padding-top/bottom only — never shorthand — so .wrap's horizontal padding survives on mobile. */
+    .hero { padding-top: 96px; padding-bottom: 48px; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 9px;
       font-size: 0.64rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
@@ -97,38 +131,41 @@
       letter-spacing: -0.04em; max-width: 18ch;
     }
     .hero .subhead {
-      margin-top: 24px; font-size: clamp(1rem, 1.6vw, 1.18rem); font-weight: 300;
+      margin-top: 22px; font-size: clamp(1rem, 1.6vw, 1.18rem); font-weight: 300;
       line-height: 1.6; color: var(--text-dim); max-width: 52ch;
     }
     .hero .subhead strong { color: var(--text); font-weight: 500; }
 
-    /* Proof bar — own row, bordered, sits directly under the sub so it lands without scrolling */
+    /* Proof bar — very top of the hero, own row, small and boxed, green only on the number. */
     .proof-bar {
-      margin-top: 24px; max-width: 56ch;
-      border: 1px solid var(--lime-bd); background: var(--lime-lo); border-radius: var(--radius);
-      padding: 15px 18px; font-size: 0.94rem; font-weight: 300; line-height: 1.55; color: var(--text-dim);
+      display: flex; width: fit-content; max-width: 100%; align-items: center; margin-bottom: 22px;
+      border: 1px solid var(--border-hi); background: rgba(255,255,255,0.02); border-radius: 100px;
+      padding: 8px 15px; font-size: 0.78rem; font-weight: 400; line-height: 1; color: var(--text-dim);
     }
-    .proof-bar strong { color: var(--lime); font-weight: 800; }
+    .proof-bar .hl { font-weight: 800; margin-right: 6px; }
 
-    /* Four-gap preview grid — fills the lower half; reads as "there's more below" */
+    /* Four-gap preview grid — big green number, label below, no descriptions. */
     .gap-grid { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .gap-cell {
-      border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-sm);
-      padding: 16px 15px; cursor: pointer; text-align: left; font-family: inherit; color: inherit;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.015); border-radius: var(--radius-sm);
+      padding: 18px 16px; cursor: pointer; text-align: left; font-family: inherit; color: inherit;
       transition: border-color var(--d-micro) var(--ease), transform var(--d-micro) var(--ease), background var(--d-micro) var(--ease);
     }
-    .gap-cell:hover { border-color: var(--lime-bd); transform: translateY(-3px); background: var(--card-hi); }
-    .gap-num { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; color: var(--lime); font-variant-numeric: tabular-nums; line-height: 1; }
-    .gap-label { margin-top: 8px; font-size: 0.82rem; font-weight: 700; color: var(--text); }
-    .gap-pain { margin-top: 4px; font-size: 0.72rem; font-weight: 400; color: var(--text-faint); line-height: 1.42; }
+    .gap-cell:hover { border-color: var(--lime-bd); transform: translateY(-3px); background: rgba(180,255,0,0.04); }
+    .gap-num { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.03em; color: var(--lime); font-variant-numeric: tabular-nums; line-height: 1; }
+    .gap-label { margin-top: 12px; font-size: 0.86rem; font-weight: 700; color: var(--text); }
 
-    /* Scroll cue */
-    .scroll-cue { margin-top: 34px; max-width: 60ch; }
-    .scroll-cue p { font-size: 0.92rem; font-weight: 300; color: var(--text-dim); line-height: 1.6; }
-    .scroll-cue .cue-arrow {
-      margin-top: 16px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
-      color: var(--lime); display: inline-flex; align-items: center; gap: 8px;
+    /* Scroll cue — animated green bar + SCROLL, nothing else. */
+    .scroll-cue { margin-top: 40px; display: inline-flex; align-items: center; gap: 13px; }
+    .scroll-cue .bar { position: relative; width: 3px; height: 42px; background: rgba(180,255,0,0.16); border-radius: 3px; overflow: hidden; }
+    .scroll-cue .bar::after {
+      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 45%;
+      background: var(--lime); border-radius: 3px; box-shadow: 0 0 10px var(--lime);
+      animation: scrollDrop 1.7s var(--ease) infinite;
     }
+    .no-motion .scroll-cue .bar::after { animation: none; top: 0; }
+    @keyframes scrollDrop { 0% { transform: translateY(-110%); } 55%, 100% { transform: translateY(240%); } }
+    .scroll-cue .lbl { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.28em; color: var(--lime); }
 
     /* Hero load sequence — quick, never makes them wait */
     .h-anim { opacity: 0; transform: translateY(14px); }
@@ -289,7 +326,8 @@
     @keyframes kardIn { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
 
     /* ══════════ PANEL 4 — LIVE SITE (SIGNATURE) ══════════ */
-    .p4 { padding: 60px 0 80px; }
+    /* padding-top/bottom only — never shorthand — so .wrap's horizontal padding survives on mobile. */
+    .p4 { padding-top: 64px; padding-bottom: 90px; }
     .p4-head { max-width: 62ch; margin: 0 0 40px; }
     .p4-head .sec-eyebrow { color: var(--text-faint); }
     .p4-head h2 { margin-top: 16px; font-size: clamp(1.8rem, 3.8vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; }
@@ -357,12 +395,24 @@
 
     /* ══════════ CHATBOT (ported functional UI, single instance) ══════════ */
     .ibb {
-      position: absolute; bottom: 14px; right: 14px; z-index: 30; width: 46px; height: 46px;
+      position: absolute; bottom: 14px; right: 14px; z-index: 30; width: 54px; height: 54px;
       background: var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border: none; box-shadow: 0 4px 20px rgba(170,255,0,0.42), 0 2px 8px rgba(0,0,0,0.6);
+      cursor: pointer; border: none; box-shadow: 0 6px 26px rgba(180,255,0,0.5), 0 2px 8px rgba(0,0,0,0.6);
       transition: transform var(--d-micro) var(--ease-back), box-shadow var(--d-micro);
     }
-    .ibb:hover { transform: scale(1.09); box-shadow: 0 8px 28px rgba(170,255,0,0.58); }
+    /* Live hint — makes it obvious the assistant is interactive, not a screenshot. */
+    .ibb-hint {
+      position: absolute; bottom: 26px; right: 78px; z-index: 30;
+      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      background: rgba(7,9,7,0.92); border: 1px solid var(--lime-bd); border-radius: 100px;
+      padding: 7px 13px; font-size: 0.66rem; font-weight: 700; color: var(--text);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      transition: opacity var(--d-micro) var(--ease), transform var(--d-micro) var(--ease);
+    }
+    .ibb-hint::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px var(--lime); animation: blink 1.6s ease infinite; }
+    .no-motion .ibb-hint::before { animation: none; }
+    .ibb-hint.hidden { opacity: 0; transform: translateX(8px); pointer-events: none; }
+    .ibb:hover { transform: scale(1.09); box-shadow: 0 8px 30px rgba(180,255,0,0.62); }
     .ibb:active { transform: scale(0.93); }
     .ibb::before { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 2px solid rgba(170,255,0,0.18); animation: pulseRing 2.6s ease infinite; }
     .no-motion .ibb::before { animation: none; }
@@ -449,22 +499,13 @@
     .v-end { background: var(--bg-raised); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 9px 22px; color: var(--red); font-family: inherit; font-size: 0.72rem; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s, border-color 0.15s; }
     .v-end:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
 
-    /* ══════════ CLOSING ══════════ */
-    .closing { padding: 110px 0 140px; text-align: center; }
-    .closing .label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
-    .closing .stat {
-      margin-top: 30px; font-size: clamp(4rem, 15vw, 10rem); font-weight: 800; letter-spacing: -0.05em;
-      line-height: 0.95; color: var(--lime);
-    }
-    .closing .sub { margin-top: 30px; font-size: clamp(1rem, 1.9vw, 1.28rem); font-weight: 300; color: var(--text-dim); line-height: 1.62; max-width: 44ch; margin-left: auto; margin-right: auto; }
-    .closing .sub strong { color: var(--text); font-weight: 500; }
-    .closing .fine { margin-top: 72px; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-ghost); }
-
     /* ══════════ RESPONSIVE ══════════ */
     @media (max-width: 860px) {
+      /* Minimum horizontal breathing room on every mobile content container. */
       .wrap { padding: 0 20px; }
       header { padding: 0 20px; }
-      .hero { padding: 70px 0 44px; }
+      .progress-rail { padding: 10px 20px 14px; gap: 7px; }
+      .hero { padding-top: 92px; padding-bottom: 44px; }
       .gap-grid { grid-template-columns: 1fr 1fr; }
       .p4-grid, .panel-grid { grid-template-columns: 1fr; gap: 16px; }
       .panel { padding: 16px 0 40px; }
@@ -473,7 +514,7 @@
       .side { margin-bottom: 4px; }
       .caption { min-height: 0; margin-bottom: 8px; }
       .t-bubble { font-size: 14px; }
-      .p4 { padding: 44px 0 56px; }
+      .p4 { padding-top: 44px; padding-bottom: 64px; }
       .p4-grid { gap: 24px; }
       .board { grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 12px 8px; }
       .col-head { font-size: 0.42rem; }
@@ -481,7 +522,6 @@
       .kard-name { font-size: 0.54rem; }
       .kard-tag { font-size: 0.46rem; }
       .cpanel { width: calc(100% - 24px); }
-      .closing { padding: 80px 0 100px; }
 
       /* Mobile pill toggle — one panel at a time */
       .mtoggle {
@@ -523,16 +563,24 @@
     <div class="header-meta">Gym Incubator</div>
   </header>
 
+  <!-- ══ FOUR SCROLL-PROGRESS BARS ══ -->
+  <div class="progress-rail" id="progress-rail" aria-hidden="true">
+    <div class="progress-seg" data-seg="1"><div class="pnum">01</div><div class="ptrack"><div class="pfill"></div></div></div>
+    <div class="progress-seg" data-seg="2"><div class="pnum">02</div><div class="ptrack"><div class="pfill"></div></div></div>
+    <div class="progress-seg" data-seg="3"><div class="pnum">03</div><div class="ptrack"><div class="pfill"></div></div></div>
+    <div class="progress-seg" data-seg="4"><div class="pnum">04</div><div class="ptrack"><div class="pfill"></div></div></div>
+  </div>
+
   <!-- ══ HERO ══ (copy rendered from the CONTENT module below) -->
   <section class="hero wrap" id="hero">
-    <div class="eyebrow h-anim h-1"><span class="dot"></span><span id="hero-eyebrow"></span></div>
-    <h1 class="h-anim h-2" id="hero-h1"></h1>
+    <div class="proof-bar h-anim h-1" id="hero-proof"></div>
+    <div class="eyebrow h-anim h-2"><span class="dot"></span><span id="hero-eyebrow"></span></div>
+    <h1 class="h-anim h-3" id="hero-h1"></h1>
     <p class="subhead h-anim h-3" id="hero-sub"></p>
-    <div class="proof-bar h-anim h-3" id="hero-proof"></div>
     <div class="gap-grid h-anim h-4" id="hero-gaps"></div>
     <div class="scroll-cue h-anim h-5">
-      <p id="hero-cue"></p>
-      <div class="cue-arrow">↓&nbsp; SCROLL</div>
+      <div class="bar"></div>
+      <div class="lbl">SCROLL</div>
     </div>
   </section>
 
@@ -782,6 +830,7 @@
               </div>
             </div>
 
+            <button class="ibb-hint" id="ibb-hint" onclick="toggleChat()">Live — chat or call it</button>
             <button class="ibb" id="ibb" onclick="toggleChat()" aria-label="Open chat">
               <div class="ibb-badge hidden" id="ibb-badge">1</div>
               <svg class="ico-chat" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -795,14 +844,6 @@
     <div class="p4-cta">
       <button class="book-btn" id="book-btn" onclick="bookTrial()">Book a trial <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
     </div>
-  </section>
-
-  <!-- ══ CLOSING ══ -->
-  <section class="closing wrap reveal">
-    <div class="label" id="close-label"></div>
-    <div class="stat" id="close-stat"></div>
-    <p class="sub" id="close-sub"></p>
-    <div class="fine">Ascend — Gym Incubator</div>
   </section>
 
   <script>
@@ -819,85 +860,86 @@
     //  and mobile (pill toggle) render the *same DOM* from this object, so the
     //  two breakpoints can never show different copy. Change text here only.
     // ══════════════════════════════════════════════════════════════════════
+    //  Rules: every string is one sentence maximum. `**phrase**` marks the one
+    //  green accent phrase per block. {{ACADEMY}}/{{FIRST_NAME}} come from the URL.
     const CONTENT = {
       hero: {
-        eyebrow: 'Ascend · For Martial Arts Academies',
-        h1: 'The members you lost last month never walked through the door.',
-        sub: 'They messaged at 11pm. They booked a trial and forgot. They trained, loved it, and nobody asked them to join. Four gaps between someone finding you and someone paying you — and you’re leaking through all four.',
-        proof: '**+£70,000** added to Nexus BJJ’s annual revenue in 90 days. Same ad spend, same coaches, same timetable. This exact system, nothing else changed.',
+        proof: '**+£70,000** to Nexus BJJ in 90 days.',
+        sub: 'Scroll through, then try the booking assistant on your own site at the bottom.',
         gaps: [
-          { num: '01', label: 'The 11pm enquiry', pain: 'Nobody replies until morning.' },
-          { num: '02', label: 'The booked trial', pain: 'No reminder. No show.' },
-          { num: '03', label: 'The trial that went well', pain: 'Nobody asked him to join.' },
-          { num: '04', label: 'Your website, right now', pain: 'No way to book, so they don’t.' }
-        ],
-        cue: 'Below: each gap as it probably looks in your academy right now, next to what it looks like once it’s fixed. Then we’ll do it live on your own website.'
+          { num: '01', label: 'The 11pm enquiry' },
+          { num: '02', label: 'The booked trial' },
+          { num: '03', label: 'The trial that went well' },
+          { num: '04', label: 'Your website' }
+        ]
       },
       sections: [
         {
-          eyebrow: '01 · The 11pm Enquiry',
-          headline: 'The first academy to reply usually wins. It’s rarely the best one.',
-          fact: 'MIT and InsideSales tracked 15,000 enquiries and 100,000 follow-up attempts. Reply within five minutes and you’re 21 times more likely to qualify that person than if you reply at thirty minutes. Not thirty hours. Thirty minutes. Most academies take until the next morning.',
-          a: { pill: 'Your setup now', sub: 'Two days later.', cap: 'He enquired at 11pm, ready to start on Monday. Someone got back to him Wednesday. By then he’d joined the place down the road — they answered in two minutes.' },
-          b: { pill: 'Once it’s fixed', sub: 'Ninety seconds.', cap: '**Answered, questions handled, booked in** — before he’d put his phone down.' }
+          eyebrow: '01 · THE 11PM ENQUIRY',
+          headline: 'They didn’t pick the best academy. They picked the one that answered.',
+          line: 'Reply in five minutes instead of thirty and you’re **21x more likely** to sign them.',
+          a: { pill: 'Now', sub: 'Two days later.', cap: 'He enquired at 11pm and by the time anyone replied, he’d joined the place down the road.' },
+          b: { pill: 'Fixed', sub: 'Ninety seconds.', cap: 'Answered, questions handled, **booked in** — before he put his phone down.' }
         },
         {
-          eyebrow: '02 · The Booked Trial',
-          headline: 'Booked is not the same as coming.',
-          fact: 'Across more than twenty controlled trials, a single reminder message cut no-shows by around 38%. And forgetting is only half of it — first-timers don’t turn up because they don’t know what to wear, whether they’ll get thrown in with blue belts, or whether they’ll be the only beginner in the room. Nobody asks that out loud. They just quietly don’t come.',
-          a: { pill: 'Your setup now', sub: 'Booked, then forgotten.', cap: 'Eight days between booking and Thursday. No reminder, no message, no contact. He didn’t show, and nobody chased.' },
-          b: { pill: 'Once it’s fixed', sub: 'Reminded, reassured, confirmed.', cap: 'A message the night before answering the questions he was too embarrassed to ask, and a thumbs up back. **You know who’s on the mat before you leave the house.**' }
+          eyebrow: '02 · THE BOOKED TRIAL',
+          headline: 'Just because they booked doesn’t mean they’re coming.',
+          line: 'One reminder cuts no-shows by **38%**, and answering their nerves beforehand does the rest.',
+          a: { pill: 'Now', sub: 'Booked, then forgotten.', cap: 'Eight days of silence, no reminder, and no one to ask what to wear or whether he’d be the only beginner.' },
+          b: { pill: 'Fixed', sub: 'Reminded and reassured.', cap: 'A message the night before answering what he was too embarrassed to ask, and **a thumbs up back.**' }
         },
         {
-          eyebrow: '03 · The Trial That Went Well',
-          headline: 'He loved it. Nobody asked him to join.',
-          fact: 'Run 20 trials a month and sign 6 and you’re a 30% academy. Sign 11 and you’re at 55%. Same twenty people, same coaching, same mats. Five extra members a month at £90 is £5,400 a year in new recurring revenue — from one month’s trials. You do that twelve times a year. The gap is almost never the session. It’s that nobody asked on the night, and nobody followed up when they said they’d think about it.',
-          a: { pill: 'Your setup now', sub: 'Sat there for 18 days.', cap: 'He came, he enjoyed it, he went home. Eighteen days later he’s still sitting in your system marked “trial done” and not one person has spoken to him.' },
-          b: { pill: 'Once it’s fixed', sub: 'Asked the same night.', cap: 'Every trial gets the ask while it’s still fresh, and a follow-up if they go quiet. The ones who say no tell you why — **so you finally know your real numbers instead of guessing at them.** Even the ones who don’t turn up get chased. Two messages, and most of them rebook.' }
+          eyebrow: '03 · THE TRIAL THAT WENT WELL',
+          headline: 'He loved it. Then nothing happened.',
+          line: '20 trials a month at 30% instead of 55% is **five members** you’re leaving behind, every month.',
+          a: { pill: 'Now', sub: 'Sat there for 18 days.', cap: 'Someone probably asked how he found it, but no follow-up went out, no offer was made, and nothing was ever sent.' },
+          b: { pill: 'Fixed', sub: 'Asked the same night.', cap: 'The ask goes out that evening with a first-month offer, a follow-up if he goes quiet, and **a rebook if he no-shows.**' }
         },
         {
-          eyebrow: '04 · Your Website, Right Now',
-          headline: 'Try booking a trial on your own site. Go on.',
-          fact: 'Nearly everyone who looks you up does it on a phone, at night, off the back of an Instagram post or a mate’s recommendation. If the only option is a contact form that lands in an inbox you’ll read tomorrow, you’ve just asked them to wait — and waiting is exactly when they open a new tab and look at whoever’s next on Google.',
-          a: { pill: 'Your site as it is', sub: 'Right now.', cap: 'Someone lands here at 11pm ready to train. There’s no way to book and no one to ask, so they send a message into the void. You’re asleep.' },
-          b: { pill: 'Your site with Ascend', sub: 'With Ascend.', cap: '**Answered instantly, questions handled, booked into the right class.** At 11pm, at 6am, while you’re on the mat.' }
+          eyebrow: '04 · YOUR WEBSITE, RIGHT NOW',
+          headline: 'This is your site with an assistant already trained on it.',
+          line: 'Message it or call it and try booking a session, exactly like one of your leads would.',
+          a: { pill: 'Now', sub: 'Right now.', cap: 'Someone lands here at 11pm ready to train, finds no way to book, and you’re asleep.' },
+          b: { pill: 'Fixed', sub: 'With Ascend.', cap: '**Answered instantly** and booked into the right class, at 11pm, at 6am, while you’re on the mat.' }
         }
       ],
-      closing: {
-        label: 'What that difference is worth',
-        stat: '+£70,000',
-        sub: 'Added to Nexus BJJ’s annual bottom line in 90 days. **Same ad spend. They just stopped leaking.**'
-      },
       fallback: {
         name: 'Martial Arts Placeholder Website',
         disciplines: 'BJJ · Muay Thai · MMA',
-        body: 'We couldn’t capture your site automatically — some sites block screenshot tools, and sometimes the URL just doesn’t come through. This is a stand-in so you can still test the booking assistant on the right. Send us your URL and we’ll rebuild this page with your actual site on it.',
-        foot: 'Placeholder — not a real academy.'
+        body: 'We couldn’t capture your site — send us your URL and we’ll rebuild this with your real one.',
+        foot: 'Placeholder — but the assistant still works, so try booking a session as if you were a lead.'
       }
     };
 
-    // Tiny markdown: escape, then **bold** → <strong>.
+    // ── URL params (personalisation tokens) ──
+    const p = new URLSearchParams(location.search);
+    const _fn = p.get('first_name') || '';
+    const firstName = (_fn === 'FAILED_OWNER' || _fn === 'FAILED_SCRAPE') ? '' : _fn.trim();
+    const _co = p.get('company') || '';
+    const academy = (_co && _co !== 'FAILED_OWNER' && _co !== 'FAILED_SCRAPE') ? _co.trim() : '';
+    const company = academy || 'Your Academy';
+    const gymUrl = p.get('url') || '';
+
+    // Tiny markdown: escape, then **phrase** → green accent span. One accent per block.
     function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
-    function md(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+    function md(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<span class="hl">$1</span>'); }
     function setText(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
     function setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
-    // ── Render the shared copy into the page ──
+    // ── Render the shared copy into the page (tokens applied, empty tokens never rendered) ──
     function renderContent() {
       const H = CONTENT.hero;
-      setText('hero-eyebrow', H.eyebrow);
-      setText('hero-h1', H.h1);
-      setHTML('hero-sub', md(H.sub));
       setHTML('hero-proof', md(H.proof));
-      setText('hero-cue', H.cue);
+      setText('hero-eyebrow', 'MADE FOR ' + (academy || 'YOUR ACADEMY'));
+      setText('hero-h1', firstName ? firstName + ', there are four gaps losing you members.' : 'There are four gaps losing you members.');
+      setText('hero-sub', H.sub);
       const gaps = document.getElementById('hero-gaps');
       if (gaps) {
         gaps.innerHTML = '';
         H.gaps.forEach(function (g, i) {
           const btn = document.createElement('button');
           btn.className = 'gap-cell'; btn.type = 'button';
-          btn.setAttribute('data-goto', String(i + 1));
-          btn.innerHTML = '<div class="gap-num">' + esc(g.num) + '</div><div class="gap-label">' + esc(g.label) + '</div><div class="gap-pain">' + esc(g.pain) + '</div>';
+          btn.innerHTML = '<div class="gap-num">' + esc(g.num) + '</div><div class="gap-label">' + esc(g.label) + '</div>';
           btn.addEventListener('click', function () {
             const target = i < 3 ? document.querySelector('.cyc-section[data-sec="' + (i + 1) + '"]') : document.getElementById('p4');
             if (target) target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
@@ -909,7 +951,7 @@
         const n = idx + 1;
         setText('sec' + n + '-eyebrow', s.eyebrow);
         setText('sec' + n + '-headline', s.headline);
-        setText('sec' + n + '-fact', s.fact);
+        setHTML('sec' + n + '-fact', md(s.line));
         setText('sec' + n + '-a-sub', s.a.sub);
         setHTML('sec' + n + '-a-cap', md(s.a.cap));
         setText('sec' + n + '-b-sub', s.b.sub);
@@ -917,18 +959,8 @@
         setText('sec' + n + '-pill-a', s.a.pill);
         setText('sec' + n + '-pill-b', s.b.pill);
       });
-      setText('close-label', CONTENT.closing.label);
-      setText('close-stat', CONTENT.closing.stat);
-      setHTML('close-sub', md(CONTENT.closing.sub));
     }
     renderContent();
-
-    // ── URL params ──
-    const p = new URLSearchParams(location.search);
-    const _fn = p.get('first_name') || '';
-    const firstName = (_fn === 'FAILED_OWNER' || _fn === 'FAILED_SCRAPE') ? '' : _fn;
-    const company = p.get('company') || 'Your Academy';
-    const gymUrl = p.get('url') || '';
 
     document.getElementById('cp-name').textContent = company + ' Assistant';
     document.getElementById('mode-name').textContent = company;
@@ -1061,6 +1093,36 @@
       };
     }
     initToggles();
+
+    // ══════════ FOUR SCROLL-PROGRESS BARS ══════════
+    // Each bar fills as its section travels through the viewport, top to bottom.
+    (function initProgress() {
+      const segs = Array.prototype.slice.call(document.querySelectorAll('.progress-seg'));
+      const secs = Array.prototype.slice.call(document.querySelectorAll('.cyc-section'));
+      if (!segs.length || !secs.length) return;
+      let raf = 0;
+      function update() {
+        raf = 0;
+        const vh = window.innerHeight;
+        segs.forEach(function (seg, i) {
+          const sec = secs[i];
+          if (!sec) return;
+          const r = sec.getBoundingClientRect();
+          // Fills from when the section enters the viewport to when its bottom reaches the
+          // viewport bottom — so the last bar completes at the page bottom too.
+          let prog = (vh - r.top) / r.height;
+          prog = Math.max(0, Math.min(1, prog));
+          const fill = seg.querySelector('.pfill');
+          if (fill) fill.style.width = (prog * 100).toFixed(1) + '%';
+          seg.classList.toggle('active', prog > 0.001 && prog < 0.999);
+          seg.classList.toggle('done', prog >= 0.999);
+        });
+      }
+      function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    })();
 
     // ══════════ PANEL 1 — chat threads ══════════
     const LEFT_THREAD = [
@@ -1265,6 +1327,7 @@
       document.getElementById('ibb').classList.toggle('open', chatOpen);
       document.getElementById('cpanel').classList.toggle('open', chatOpen);
       document.getElementById('ibb-badge').classList.add('hidden');
+      const hint = document.getElementById('ibb-hint'); if (hint) hint.classList.toggle('hidden', chatOpen);
       // On mobile, opening the chat pins the live-site section to the Ascend panel.
       if (chatOpen && typeof window.__killP4Cycle === 'function') window.__killP4Cycle();
     };
