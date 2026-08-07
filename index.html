@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title id="page-title">Ascend — Your next 20 members already messaged you.</title>
+  <title id="page-title">Ascend — The members you lost never walked through the door.</title>
   <meta name="description" content="See exactly where your martial arts academy is losing members — then watch your own site with the fix running on it." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,7 +47,8 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    /* Free scroll — no smooth-scroll easing hijack, no snap. Stops wherever the user stops. */
+    html { -webkit-text-size-adjust: 100%; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -57,7 +58,7 @@
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
-    /* Subtle film grain — matches the brand's near-black surface */
+    /* Subtle film grain — the brand background. Global, so it renders on mobile and desktop alike. */
     body::before {
       content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -81,73 +82,83 @@
     .wordmark { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text); }
     .header-meta { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
 
-    /* ── HERO ── */
-    .hero { padding: 116px 0 92px; }
+    /* ── HERO ── (tightened — no dead space; lower half carries the four-gap grid) */
+    .hero { padding: 84px 0 44px; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 9px;
       font-size: 0.64rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--text-dim);
       border: 1px solid var(--border); border-radius: 100px;
-      padding: 7px 15px 7px 13px; margin-bottom: 34px;
+      padding: 7px 15px 7px 13px; margin-bottom: 26px;
     }
     .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-faint); }
     .hero h1 {
-      font-size: clamp(2.5rem, 6.4vw, 4.6rem); font-weight: 800; line-height: 1.02;
-      letter-spacing: -0.04em; max-width: 15ch;
+      font-size: clamp(2.3rem, 5.6vw, 4.1rem); font-weight: 800; line-height: 1.03;
+      letter-spacing: -0.04em; max-width: 18ch;
     }
     .hero .subhead {
-      margin-top: 30px; font-size: clamp(1rem, 1.7vw, 1.22rem); font-weight: 300;
-      line-height: 1.62; color: var(--text-dim); max-width: 40ch;
+      margin-top: 24px; font-size: clamp(1rem, 1.6vw, 1.18rem); font-weight: 300;
+      line-height: 1.6; color: var(--text-dim); max-width: 52ch;
     }
     .hero .subhead strong { color: var(--text); font-weight: 500; }
+
+    /* Proof bar — own row, bordered, sits directly under the sub so it lands without scrolling */
+    .proof-bar {
+      margin-top: 24px; max-width: 56ch;
+      border: 1px solid var(--lime-bd); background: var(--lime-lo); border-radius: var(--radius);
+      padding: 15px 18px; font-size: 0.94rem; font-weight: 300; line-height: 1.55; color: var(--text-dim);
+    }
+    .proof-bar strong { color: var(--lime); font-weight: 800; }
+
+    /* Four-gap preview grid — fills the lower half; reads as "there's more below" */
+    .gap-grid { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .gap-cell {
+      border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-sm);
+      padding: 16px 15px; cursor: pointer; text-align: left; font-family: inherit; color: inherit;
+      transition: border-color var(--d-micro) var(--ease), transform var(--d-micro) var(--ease), background var(--d-micro) var(--ease);
+    }
+    .gap-cell:hover { border-color: var(--lime-bd); transform: translateY(-3px); background: var(--card-hi); }
+    .gap-num { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; color: var(--lime); font-variant-numeric: tabular-nums; line-height: 1; }
+    .gap-label { margin-top: 8px; font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .gap-pain { margin-top: 4px; font-size: 0.72rem; font-weight: 400; color: var(--text-faint); line-height: 1.42; }
+
+    /* Scroll cue */
+    .scroll-cue { margin-top: 34px; max-width: 60ch; }
+    .scroll-cue p { font-size: 0.92rem; font-weight: 300; color: var(--text-dim); line-height: 1.6; }
+    .scroll-cue .cue-arrow {
+      margin-top: 16px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      color: var(--lime); display: inline-flex; align-items: center; gap: 8px;
+    }
 
     /* Hero load sequence — quick, never makes them wait */
     .h-anim { opacity: 0; transform: translateY(14px); }
     .no-motion .h-anim { opacity: 1; transform: none; }
     .hero.play .h-anim { animation: heroIn 0.62s var(--ease) both; }
     .hero.play .h-1 { animation-delay: 0.04s; }
-    .hero.play .h-2 { animation-delay: 0.16s; }
-    .hero.play .h-3 { animation-delay: 0.34s; }
+    .hero.play .h-2 { animation-delay: 0.14s; }
+    .hero.play .h-3 { animation-delay: 0.26s; }
+    .hero.play .h-4 { animation-delay: 0.38s; }
+    .hero.play .h-5 { animation-delay: 0.50s; }
     @keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
-    /* ── SECTION INTRO ── */
-    .intro { padding: 30px 0 8px; }
-    .label {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-faint);
-    }
-    .intro h2 {
-      margin-top: 18px; font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800;
-      letter-spacing: -0.035em; line-height: 1.06;
-    }
-    .intro p { margin-top: 18px; font-size: 1.02rem; font-weight: 300; color: var(--text-dim); line-height: 1.65; max-width: 46ch; }
+    /* ── SECTION HEADER (eyebrow → headline → hard fact) ── */
+    .sec-head { padding: 54px 0 6px; }
+    .sec-eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+    .sec-headline { margin-top: 16px; font-size: clamp(1.8rem, 3.8vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; max-width: 20ch; }
+    /* Hard fact — slightly larger, muted; sits between headline and panels */
+    .hard-fact { margin-top: 20px; font-size: 1.08rem; font-weight: 300; color: var(--text-dim); line-height: 1.62; max-width: 62ch; }
 
     /* ── REVEAL PRIMITIVE ── */
     .reveal { opacity: 0; transform: translateY(26px); transition: opacity var(--d-panel) var(--ease), transform var(--d-panel) var(--ease); }
     .reveal.in { opacity: 1; transform: none; }
     .no-motion .reveal { opacity: 1 !important; transform: none !important; }
 
-    /* ── STICKY COLUMN HEADERS ── */
-    .panels { position: relative; }
-    .colhead {
-      position: sticky; top: 58px; z-index: 90;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
-      padding: 14px 0;
-      background: rgba(10,10,10,0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--hair);
-      margin-bottom: 8px;
-    }
-    .colhead .ch {
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-      display: flex; align-items: center; gap: 9px;
-    }
-    .colhead .ch.left  { color: var(--text-faint); }
-    .colhead .ch.right { color: var(--lime); }
-    .colhead .ch .tick { width: 16px; height: 1px; background: currentColor; opacity: 0.6; }
+    /* ── MOBILE PILL TOGGLE (mobile only; hidden on desktop) ── */
+    .mtoggle { display: none; }
 
     /* ── PANEL SHELL ── */
-    .panel { padding: 60px 0; border-bottom: 1px solid var(--hair); }
-    .panel:last-of-type { border-bottom: none; }
+    .panel { padding: 26px 0 56px; border-bottom: 1px solid var(--hair); }
+    .cyc-section:last-of-type .panel { border-bottom: none; }
     .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
     .side { display: flex; flex-direction: column; }
     .side-tag {
@@ -167,6 +178,10 @@
     .side.left .frame  { background: #0e0e0e; border-color: var(--hair); }
     .side.right .frame { background: var(--card); }
 
+    /* Enquiry-handling chat panels are height-capped so they never dwarf the panel beside them
+       and always fit comfortably in under 70% of the viewport. */
+    .panel[data-panel="1"] .frame { min-height: 0; height: clamp(300px, 52vh, 430px); }
+
     .caption {
       margin-top: 18px; font-size: 0.86rem; line-height: 1.62; font-weight: 300;
       min-height: 3.2em; /* reserve space so nothing reflows */
@@ -176,20 +191,23 @@
     .side.right .caption strong { color: var(--text); font-weight: 500; }
 
     /* ══════════ PANEL 1 — CHAT THREADS ══════════ */
-    .thread { display: flex; flex-direction: column; gap: 2px; padding: 20px 18px; overflow: hidden; }
-    .t-divider { text-align: center; font-size: 0.64rem; color: var(--text-faint); margin: 12px 0 8px; font-weight: 500; }
+    .thread { display: flex; flex-direction: column; gap: 8px; padding: 18px 16px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #282828 transparent; }
+    .thread::-webkit-scrollbar { width: 3px; }
+    .thread::-webkit-scrollbar-thumb { background: #282828; border-radius: 2px; }
+    .t-divider { text-align: center; font-size: 0.66rem; color: var(--text-faint); margin: 4px 0 2px; font-weight: 500; }
     .side.left .t-divider { color: var(--text-ghost); }
-    .t-ts { text-align: center; font-size: 0.58rem; color: var(--text-ghost); margin: 8px 0 3px; font-weight: 500; letter-spacing: 0.02em; }
-    .t-row { display: flex; margin: 1px 0; }
+    .t-ts { text-align: center; font-size: 11px; color: var(--text-ghost); margin: 4px 0 0; font-weight: 500; letter-spacing: 0.02em; }
+    .t-row { display: flex; }
     .t-row.out { justify-content: flex-end; }
     .t-row.in  { justify-content: flex-start; }
-    .t-bubble { max-width: 78%; padding: 8px 13px; font-size: 0.82rem; line-height: 1.42; border-radius: 17px; }
+    /* ~15px desktop / ~14px mobile bubbles, 10px 14px padding */
+    .t-bubble { max-width: 80%; padding: 10px 14px; font-size: 15px; line-height: 1.42; border-radius: 17px; }
     .t-row.out .t-bubble { background: #0a84ff; color: #fff; border-bottom-right-radius: 5px; }
     .t-row.in  .t-bubble { background: #262628; color: #eaeaea; border-bottom-left-radius: 5px; }
     .side.left .t-row.out .t-bubble { background: #2c4a6b; color: #b8c6d4; } /* muted, lifeless */
-    .t-seen { text-align: right; font-size: 0.6rem; color: var(--text-faint); padding: 3px 4px 0; font-weight: 500; }
+    .t-seen { text-align: right; font-size: 11px; color: var(--text-faint); padding: 2px 4px 0; font-weight: 500; }
     .side.left .t-seen { color: var(--text-ghost); }
-    .t-typing { display: inline-flex; gap: 4px; align-items: center; background: #262628; padding: 11px 14px; border-radius: 17px; border-bottom-left-radius: 5px; }
+    .t-typing { display: inline-flex; gap: 4px; align-items: center; background: #262628; padding: 12px 14px; border-radius: 17px; border-bottom-left-radius: 5px; }
     .t-typing i { width: 6px; height: 6px; border-radius: 50%; background: #6a6a6c; display: block; animation: tdot 1.1s ease infinite; }
     .t-typing i:nth-child(2) { animation-delay: 0.16s; }
     .t-typing i:nth-child(3) { animation-delay: 0.32s; }
@@ -244,36 +262,38 @@
     .no-motion .cal-react { opacity: 1; transform: none; }
     @keyframes reactIn { to { opacity: 1; transform: scale(1); } }
 
-    /* ══════════ PANEL 3 — CRM BOARD ══════════ */
-    .board { flex: 1; padding: 14px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; overflow: hidden; }
+    /* ══════════ PANEL 3 — CRM BOARD (5 columns incl. No Show) ══════════ */
+    .board { flex: 1; padding: 14px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; overflow: hidden; }
     .col { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
-    .col-head { font-size: 0.54rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); padding: 2px 2px 6px; border-bottom: 1px solid var(--hair); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .col-head { font-size: 0.52rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); padding: 2px 2px 6px; border-bottom: 1px solid var(--hair); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .col.noshow .col-head { color: #a06a6a; }
     .col.signed .col-head { color: var(--lime); }
     .kard {
-      background: #161616; border: 1px solid var(--border); border-radius: 8px; padding: 8px 8px;
+      background: #161616; border: 1px solid var(--border); border-radius: 8px; padding: 8px 7px;
       display: flex; flex-direction: column; gap: 5px;
     }
     .side.left .kard { background: #101010; border-color: var(--hair); filter: saturate(0.4); }
-    .kard-name { font-size: 0.64rem; font-weight: 600; color: var(--text-dim); line-height: 1.2; }
+    .kard-name { font-size: 0.62rem; font-weight: 600; color: var(--text-dim); line-height: 1.2; }
     .side.right .kard-name { color: var(--text); }
-    .kard-tag { font-size: 0.54rem; font-weight: 600; letter-spacing: 0.02em; color: var(--text-faint); display: inline-flex; align-items: center; gap: 4px; }
+    .kard-tag { font-size: 0.52rem; font-weight: 600; letter-spacing: 0.02em; color: var(--text-faint); display: inline-flex; align-items: center; gap: 4px; line-height: 1.25; }
     .kard-tag.stale { color: #7a5a5a; }
+    .kard-tag.chase { color: #7a9a5a; }
     .kard.win { border-color: var(--lime-bd); background: rgba(170,255,0,0.05); }
     .kard.win .kard-tag { color: var(--lime); }
     .kard.win .kard-tag svg { width: 10px; height: 10px; }
     .kard-count { font-variant-numeric: tabular-nums; }
     .col.signed.empty-note { position: relative; }
-    .empty-slot { font-size: 0.56rem; color: var(--text-ghost); text-align: center; padding: 14px 4px; border: 1px dashed var(--hair); border-radius: 8px; font-style: italic; }
+    .empty-slot { font-size: 0.54rem; color: var(--text-ghost); text-align: center; padding: 14px 3px; border: 1px dashed var(--hair); border-radius: 8px; font-style: italic; }
     .kard.slidein { animation: kardIn 0.5s var(--ease) both; }
     .no-motion .kard.slidein { animation: none; }
     @keyframes kardIn { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
 
     /* ══════════ PANEL 4 — LIVE SITE (SIGNATURE) ══════════ */
-    .p4 { padding: 96px 0 80px; }
-    .p4-head { text-align: center; max-width: 44ch; margin: 0 auto 50px; }
-    .p4-head .label { color: var(--lime); }
-    .p4-head h2 { margin-top: 18px; font-size: clamp(2rem, 4.6vw, 3.3rem); font-weight: 800; letter-spacing: -0.038em; line-height: 1.04; }
-    .p4-head p { margin-top: 18px; font-size: 1.04rem; font-weight: 300; color: var(--text-dim); line-height: 1.62; }
+    .p4 { padding: 60px 0 80px; }
+    .p4-head { max-width: 62ch; margin: 0 0 40px; }
+    .p4-head .sec-eyebrow { color: var(--text-faint); }
+    .p4-head h2 { margin-top: 16px; font-size: clamp(1.8rem, 3.8vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; }
+    .p4-head .hard-fact { margin-top: 20px; }
     .p4-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
     .p4-col .side-tag { margin-bottom: 14px; }
 
@@ -299,9 +319,7 @@
     .viewport .loading p { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .p4-cta {
-      text-align: center; margin-top: 34px;
-    }
+    .p4-cta { text-align: center; margin-top: 34px; }
     .book-btn {
       display: inline-flex; align-items: center; gap: 9px;
       background: var(--lime); color: #000; font-family: inherit; font-size: 1.02rem; font-weight: 800;
@@ -317,23 +335,25 @@
       50% { box-shadow: 0 0 0 12px rgba(170,255,0,0.0), 0 0 34px 2px rgba(170,255,0,0.28); }
     }
 
-    /* ══════════ MOCK SITE FALLBACK ══════════ */
+    /* ══════════ MOCK SITE FALLBACK (placeholder — never a fake academy) ══════════ */
     .mock { position: absolute; inset: 0; overflow-y: auto; background: #0f1115; color: #e8e8ea; display: none; }
     .mock.show { display: block; }
-    .mock-hero { position: relative; padding: 30px 20px 26px; text-align: center; background: linear-gradient(160deg, #12151b 0%, #0c0e12 100%); border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .mock-kicker { font-size: 0.54rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #d24b3f; }
-    .mock-h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 10px 0 8px; line-height: 1.1; }
-    .mock-sub { font-size: 0.72rem; color: #9aa0aa; line-height: 1.5; max-width: 32ch; margin: 0 auto; }
-    .mock-cta { display: inline-block; margin-top: 14px; background: #d24b3f; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 9px 18px; border-radius: 6px; }
+    .mock-hero { position: relative; padding: 30px 20px 24px; text-align: center; background: linear-gradient(160deg, #12151b 0%, #0c0e12 100%); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .mock-kicker { font-size: 0.54rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #7c828c; }
+    .mock-h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.02em; margin: 10px 0 8px; line-height: 1.15; text-transform: uppercase; color: #cdd1d8; }
+    .mock-sub { font-size: 0.72rem; color: #9aa0aa; line-height: 1.55; max-width: 34ch; margin: 0 auto; }
+    .mock-cta { display: inline-block; margin-top: 14px; background: #2a2f38; color: #cdd1d8; font-size: 0.68rem; font-weight: 700; padding: 9px 18px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); }
     .mock-row { display: flex; gap: 8px; padding: 16px 16px; }
     .mock-card { flex: 1; background: #14171d; border: 1px solid rgba(255,255,255,0.06); border-radius: 9px; padding: 12px 11px; }
     .mock-card h4 { font-size: 0.72rem; font-weight: 700; margin-bottom: 5px; }
     .mock-card p { font-size: 0.6rem; color: #8b909a; line-height: 1.45; }
-    .mock-sched { padding: 4px 16px 20px; }
+    .mock-sched { padding: 4px 16px 12px; }
     .mock-sched h3 { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7c828c; margin-bottom: 8px; }
     .mock-slot { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.68rem; }
     .mock-slot span:first-child { color: #cdd1d8; font-weight: 600; }
     .mock-slot span:last-child { color: #7c828c; }
+    .mock-foot { padding: 10px 16px 18px; text-align: center; }
+    .mock-foot span { font-size: 11px; color: #5a5f68; font-style: italic; }
 
     /* ══════════ CHATBOT (ported functional UI, single instance) ══════════ */
     .ibb {
@@ -430,8 +450,8 @@
     .v-end:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
 
     /* ══════════ CLOSING ══════════ */
-    .closing { padding: 120px 0 150px; text-align: center; }
-    .closing .label { color: var(--text-faint); }
+    .closing { padding: 110px 0 140px; text-align: center; }
+    .closing .label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
     .closing .stat {
       margin-top: 30px; font-size: clamp(4rem, 15vw, 10rem); font-weight: 800; letter-spacing: -0.05em;
       line-height: 0.95; color: var(--lime);
@@ -444,29 +464,54 @@
     @media (max-width: 860px) {
       .wrap { padding: 0 20px; }
       header { padding: 0 20px; }
-      .hero { padding: 76px 0 60px; }
-      .panel-grid, .p4-grid, .colhead { grid-template-columns: 1fr; gap: 16px; }
-      .colhead { display: none; } /* headers live inside each side's tag on mobile */
-      .panel { padding: 40px 0; }
+      .hero { padding: 70px 0 44px; }
+      .gap-grid { grid-template-columns: 1fr 1fr; }
+      .p4-grid, .panel-grid { grid-template-columns: 1fr; gap: 16px; }
+      .panel { padding: 16px 0 40px; }
       .frame { min-height: 236px; }
+      .panel[data-panel="1"] .frame { height: clamp(280px, 56vh, 420px); }
       .side { margin-bottom: 4px; }
       .caption { min-height: 0; margin-bottom: 8px; }
-      .p4 { padding: 64px 0 56px; }
+      .t-bubble { font-size: 14px; }
+      .p4 { padding: 44px 0 56px; }
       .p4-grid { gap: 24px; }
-      .board { grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 12px 8px; }
-      .col-head { font-size: 0.46rem; }
-      .kard { padding: 6px 5px; }
-      .kard-name { font-size: 0.56rem; }
-      .kard-tag { font-size: 0.48rem; }
+      .board { grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 12px 8px; }
+      .col-head { font-size: 0.42rem; }
+      .kard { padding: 6px 4px; }
+      .kard-name { font-size: 0.54rem; }
+      .kard-tag { font-size: 0.46rem; }
       .cpanel { width: calc(100% - 24px); }
       .closing { padding: 80px 0 100px; }
+
+      /* Mobile pill toggle — one panel at a time */
+      .mtoggle {
+        display: flex; gap: 5px; margin: 0 0 16px; padding: 4px;
+        background: #111; border: 1px solid var(--border); border-radius: 100px; width: 100%;
+      }
+      .pill {
+        flex: 1; border: none; background: transparent; color: var(--text-faint);
+        font-family: inherit; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.01em;
+        padding: 9px 10px; border-radius: 100px; cursor: pointer; white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis;
+        transition: background var(--d-micro) var(--ease), color var(--d-micro) var(--ease);
+      }
+      .pill.active { background: var(--lime); color: #000; }
+
+      /* Overlap both sides in a single grid cell → cell height = the taller of the two,
+         so toggling never shifts layout. Crossfade only; no slide, no reflow. */
+      .cyc-grid { grid-template-columns: 1fr; }
+      .cyc-grid > .cyc-side {
+        grid-area: 1 / 1 / 2 / 2;
+        opacity: 0; pointer-events: none;
+        transition: opacity 350ms var(--ease);
+      }
+      .cyc-grid > .cyc-side.active { opacity: 1; pointer-events: auto; }
     }
-    @media (max-width: 400px) {
-      .board { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 380px) {
+      .board { gap: 4px; padding: 10px 6px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
       * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
     }
   </style>
@@ -478,152 +523,194 @@
     <div class="header-meta">Gym Incubator</div>
   </header>
 
-  <!-- ══ HERO ══ -->
+  <!-- ══ HERO ══ (copy rendered from the CONTENT module below) -->
   <section class="hero wrap" id="hero">
-    <div class="eyebrow h-anim h-1"><span class="dot"></span>Ascend · For Martial Arts Academies</div>
-    <h1 class="h-anim h-2">Your next 20 members already messaged you.</h1>
-    <p class="subhead h-anim h-3">Most academies don't lose members on price or on quality. <strong>They lose them in the gaps.</strong></p>
-  </section>
-
-  <!-- ══ SECTION INTRO ══ -->
-  <section class="intro wrap reveal">
-    <div class="label">Four Moments</div>
-    <h2>This is where the members go.</h2>
-    <p>Four moments between someone finding you and someone paying you. Watch both sides.</p>
-  </section>
-
-  <!-- ══ PANELS 1–3 ══ -->
-  <div class="panels wrap">
-    <div class="colhead">
-      <div class="ch left"><span class="tick"></span>What's probably happening now</div>
-      <div class="ch right"><span class="tick"></span>What Ascend does instead</div>
+    <div class="eyebrow h-anim h-1"><span class="dot"></span><span id="hero-eyebrow"></span></div>
+    <h1 class="h-anim h-2" id="hero-h1"></h1>
+    <p class="subhead h-anim h-3" id="hero-sub"></p>
+    <div class="proof-bar h-anim h-3" id="hero-proof"></div>
+    <div class="gap-grid h-anim h-4" id="hero-gaps"></div>
+    <div class="scroll-cue h-anim h-5">
+      <p id="hero-cue"></p>
+      <div class="cue-arrow">↓&nbsp; SCROLL</div>
     </div>
+  </section>
 
-    <!-- PANEL 1 — THE ENQUIRY -->
-    <section class="panel reveal" data-panel="1">
-      <div class="panel-grid">
-        <div class="side left">
-          <div class="side-tag">Two days later.</div>
-          <div class="frame"><div class="thread" id="thread-left"></div></div>
-          <p class="caption">He enquired at 11pm, ready to start. By the time anyone replied, he'd joined the place down the road — they answered in two minutes.</p>
-        </div>
-        <div class="side right">
-          <div class="side-tag">Ninety seconds.</div>
-          <div class="frame"><div class="thread" id="thread-right"></div></div>
-          <p class="caption"><strong>Answered, questions handled, booked in</strong> — before he'd put his phone down.</p>
+  <!-- ══ SECTIONS 01–03 ══ -->
+  <div class="wrap">
+
+    <!-- SECTION 01 — THE ENQUIRY -->
+    <section class="cyc-section" data-sec="1">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow" id="sec1-eyebrow"></div>
+        <h2 class="sec-headline" id="sec1-headline"></h2>
+        <p class="hard-fact" id="sec1-fact"></p>
+      </div>
+      <div class="mtoggle" role="tablist" aria-label="Toggle view">
+        <button class="pill active" type="button" data-side="left" id="sec1-pill-a"></button>
+        <button class="pill" type="button" data-side="right" id="sec1-pill-b"></button>
+      </div>
+      <div class="panel reveal" data-panel="1">
+        <div class="panel-grid cyc-grid">
+          <div class="side left active cyc-side">
+            <div class="side-tag" id="sec1-a-sub"></div>
+            <div class="frame"><div class="thread" id="thread-left"></div></div>
+            <p class="caption" id="sec1-a-cap"></p>
+          </div>
+          <div class="side right cyc-side">
+            <div class="side-tag" id="sec1-b-sub"></div>
+            <div class="frame"><div class="thread" id="thread-right"></div></div>
+            <p class="caption" id="sec1-b-cap"></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- PANEL 2 — THE REMINDER -->
-    <section class="panel reveal" data-panel="2">
-      <div class="panel-grid">
-        <div class="side left">
-          <div class="side-tag">Booked, then forgotten.</div>
-          <div class="frame">
-            <div class="cal">
-              <div class="cal-head">Thursday · Day view</div>
-              <div class="cal-grid" id="cal-left">
-                <div class="cal-slot"><div class="cal-time">4 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">5 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">6 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">7 PM</div><div class="cal-line"></div></div>
-                <div class="cal-event"><div class="cal-ev-title">Trial Session · James</div><div class="cal-ev-sub">6:00 – 7:00 PM</div></div>
-                <div class="stamp noshow" id="stamp-noshow">No Show</div>
-              </div>
-            </div>
-          </div>
-          <p class="caption">Eight days between booking and the session. No reminder, no contact, nothing. He didn't show, and nobody chased.</p>
-        </div>
-        <div class="side right">
-          <div class="side-tag">Reminded, and confirmed.</div>
-          <div class="frame">
-            <div class="cal">
-              <div class="cal-head">Thursday · Day view</div>
-              <div class="cal-grid" id="cal-right">
-                <div class="cal-notif" id="cal-notif">
-                  <div class="cal-notif-ico">🔔</div>
-                  <div class="cal-notif-txt"><div class="cal-notif-t">Reminder sent · 5:00 PM</div><div class="cal-notif-s">The night before + day of</div></div>
-                  <div class="cal-react" id="cal-react">👍</div>
+    <!-- SECTION 02 — THE REMINDER -->
+    <section class="cyc-section" data-sec="2">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow" id="sec2-eyebrow"></div>
+        <h2 class="sec-headline" id="sec2-headline"></h2>
+        <p class="hard-fact" id="sec2-fact"></p>
+      </div>
+      <div class="mtoggle" role="tablist" aria-label="Toggle view">
+        <button class="pill active" type="button" data-side="left" id="sec2-pill-a"></button>
+        <button class="pill" type="button" data-side="right" id="sec2-pill-b"></button>
+      </div>
+      <div class="panel reveal" data-panel="2">
+        <div class="panel-grid cyc-grid">
+          <div class="side left active cyc-side">
+            <div class="side-tag" id="sec2-a-sub"></div>
+            <div class="frame">
+              <div class="cal">
+                <div class="cal-head">Thursday · Day view</div>
+                <div class="cal-grid" id="cal-left">
+                  <div class="cal-slot"><div class="cal-time">4 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">5 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">6 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">7 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-event"><div class="cal-ev-title">Trial Session · James</div><div class="cal-ev-sub">6:00 – 7:00 PM</div></div>
+                  <div class="stamp noshow" id="stamp-noshow">No Show</div>
                 </div>
-                <div class="cal-slot"><div class="cal-time">4 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">5 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">6 PM</div><div class="cal-line"></div></div>
-                <div class="cal-slot"><div class="cal-time">7 PM</div><div class="cal-line"></div></div>
-                <div class="cal-event"><div class="cal-ev-title">Trial Session · James</div><div class="cal-ev-sub">6:00 – 7:00 PM</div></div>
-                <div class="stamp attended" id="stamp-attended"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Attended</div>
               </div>
             </div>
+            <p class="caption" id="sec2-a-cap"></p>
           </div>
-          <p class="caption">A reminder the night before and a thumbs up back. <strong>You know who's coming before you're on the mat.</strong></p>
+          <div class="side right cyc-side">
+            <div class="side-tag" id="sec2-b-sub"></div>
+            <div class="frame">
+              <div class="cal">
+                <div class="cal-head">Thursday · Day view</div>
+                <div class="cal-grid" id="cal-right">
+                  <div class="cal-notif" id="cal-notif">
+                    <div class="cal-notif-ico">🔔</div>
+                    <div class="cal-notif-txt"><div class="cal-notif-t">Reminder sent · 5:00 PM</div><div class="cal-notif-s">The night before + day of</div></div>
+                    <div class="cal-react" id="cal-react">👍</div>
+                  </div>
+                  <div class="cal-slot"><div class="cal-time">4 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">5 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">6 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-slot"><div class="cal-time">7 PM</div><div class="cal-line"></div></div>
+                  <div class="cal-event"><div class="cal-ev-title">Trial Session · James</div><div class="cal-ev-sub">6:00 – 7:00 PM</div></div>
+                  <div class="stamp attended" id="stamp-attended"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Attended</div>
+                </div>
+              </div>
+            </div>
+            <p class="caption" id="sec2-b-cap"></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- PANEL 3 — AFTER THE SESSION -->
-    <section class="panel reveal" data-panel="3">
-      <div class="panel-grid">
-        <div class="side left">
-          <div class="side-tag">Sat there for 18 days.</div>
-          <div class="frame">
-            <div class="board" id="board-left">
-              <div class="col"><div class="col-head">Booked</div></div>
-              <div class="col">
-                <div class="col-head">Trial Done</div>
-                <div class="kard"><div class="kard-name">Marcus T.</div><div class="kard-tag stale"><span class="kard-count" data-count="18">0</span> days inactive</div></div>
-                <div class="kard"><div class="kard-name">Priya S.</div><div class="kard-tag stale">No reply · <span class="kard-count" data-count="24">0</span> days</div></div>
-                <div class="kard"><div class="kard-name">Danny R.</div><div class="kard-tag stale">No follow-up sent</div></div>
-                <div class="kard"><div class="kard-name">Aisha K.</div><div class="kard-tag stale"><span class="kard-count" data-count="12">0</span> days inactive</div></div>
-              </div>
-              <div class="col"><div class="col-head">No Sale</div></div>
-              <div class="col signed"><div class="col-head">Signed</div><div class="empty-slot">empty</div></div>
-            </div>
-          </div>
-          <p class="caption">He came, he enjoyed it, nobody asked him to join. He's still sitting in your system doing nothing.</p>
-        </div>
-        <div class="side right">
-          <div class="side-tag">Asked the same night.</div>
-          <div class="frame">
-            <div class="board" id="board-right">
-              <div class="col">
-                <div class="col-head">Booked</div>
-                <div class="kard" data-order="1"><div class="kard-name">Leo M.</div><div class="kard-tag">Thu 6 PM</div></div>
-                <div class="kard" data-order="2"><div class="kard-name">Sam W.</div><div class="kard-tag">Sat 10 AM</div></div>
-              </div>
-              <div class="col">
-                <div class="col-head">Trial Done</div>
-                <div class="kard" data-order="3"><div class="kard-name">Owen H.</div><div class="kard-tag">Asked today</div></div>
-              </div>
-              <div class="col">
-                <div class="col-head">No Sale</div>
-                <div class="kard" data-order="4"><div class="kard-name">Chloe B.</div><div class="kard-tag">Didn't enjoy intro</div></div>
-                <div class="kard" data-order="5"><div class="kard-name">Ryan P.</div><div class="kard-tag">Moving away</div></div>
-              </div>
-              <div class="col signed">
-                <div class="col-head">Signed</div>
-                <div class="kard win" data-order="6"><div class="kard-name">James D.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>12-month offer</div></div>
-                <div class="kard win" data-order="7"><div class="kard-name">Zara N.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Signed upfront</div></div>
-                <div class="kard win" data-order="8"><div class="kard-name">Theo G.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Intro offer</div></div>
+    <!-- SECTION 03 — AFTER THE SESSION -->
+    <section class="cyc-section" data-sec="3">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow" id="sec3-eyebrow"></div>
+        <h2 class="sec-headline" id="sec3-headline"></h2>
+        <p class="hard-fact" id="sec3-fact"></p>
+      </div>
+      <div class="mtoggle" role="tablist" aria-label="Toggle view">
+        <button class="pill active" type="button" data-side="left" id="sec3-pill-a"></button>
+        <button class="pill" type="button" data-side="right" id="sec3-pill-b"></button>
+      </div>
+      <div class="panel reveal" data-panel="3">
+        <div class="panel-grid cyc-grid">
+          <div class="side left active cyc-side">
+            <div class="side-tag" id="sec3-a-sub"></div>
+            <div class="frame">
+              <div class="board" id="board-left">
+                <div class="col"><div class="col-head">Booked</div></div>
+                <div class="col">
+                  <div class="col-head">Trial Done</div>
+                  <div class="kard"><div class="kard-name">Marcus T.</div><div class="kard-tag stale"><span class="kard-count" data-count="18">0</span> days inactive</div></div>
+                  <div class="kard"><div class="kard-name">Priya S.</div><div class="kard-tag stale">No reply · <span class="kard-count" data-count="24">0</span> days</div></div>
+                  <div class="kard"><div class="kard-name">Danny R.</div><div class="kard-tag stale">No follow-up</div></div>
+                  <div class="kard"><div class="kard-name">Aisha K.</div><div class="kard-tag stale"><span class="kard-count" data-count="12">0</span> days inactive</div></div>
+                </div>
+                <div class="col noshow">
+                  <div class="col-head">No Show</div>
+                  <div class="kard"><div class="kard-name">Ellie R.</div><div class="kard-tag stale">No contact · 14 days</div></div>
+                  <div class="kard"><div class="kard-name">Josh M.</div><div class="kard-tag stale">No contact · 9 days</div></div>
+                </div>
+                <div class="col"><div class="col-head">No Sale</div></div>
+                <div class="col signed"><div class="col-head">Signed</div><div class="empty-slot">empty</div></div>
               </div>
             </div>
+            <p class="caption" id="sec3-a-cap"></p>
           </div>
-          <p class="caption">Every trial gets the ask while it's still fresh. The ones who say no tell you why — <strong>and you finally know your real numbers.</strong></p>
+          <div class="side right cyc-side">
+            <div class="side-tag" id="sec3-b-sub"></div>
+            <div class="frame">
+              <div class="board" id="board-right">
+                <div class="col">
+                  <div class="col-head">Booked</div>
+                  <div class="kard" data-order="1"><div class="kard-name">Leo M.</div><div class="kard-tag">Thu 6 PM</div></div>
+                  <div class="kard" data-order="2"><div class="kard-name">Sam W.</div><div class="kard-tag">Sat 10 AM</div></div>
+                </div>
+                <div class="col">
+                  <div class="col-head">Trial Done</div>
+                  <div class="kard" data-order="3"><div class="kard-name">Owen H.</div><div class="kard-tag">Asked today</div></div>
+                </div>
+                <div class="col noshow">
+                  <div class="col-head">No Show</div>
+                  <div class="kard" data-order="4"><div class="kard-name">Ellie R.</div><div class="kard-tag chase">Rebooked — Tue 7pm</div></div>
+                  <div class="kard" data-order="5"><div class="kard-name">Josh M.</div><div class="kard-tag chase">Replied, picking a date</div></div>
+                </div>
+                <div class="col">
+                  <div class="col-head">No Sale</div>
+                  <div class="kard" data-order="6"><div class="kard-name">Chloe B.</div><div class="kard-tag">Didn't enjoy intro</div></div>
+                  <div class="kard" data-order="7"><div class="kard-name">Ryan P.</div><div class="kard-tag">Moving away</div></div>
+                </div>
+                <div class="col signed">
+                  <div class="col-head">Signed</div>
+                  <div class="kard win" data-order="8"><div class="kard-name">James D.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>12-month</div></div>
+                  <div class="kard win" data-order="9"><div class="kard-name">Zara N.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Upfront</div></div>
+                  <div class="kard win" data-order="10"><div class="kard-name">Theo G.</div><div class="kard-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Intro offer</div></div>
+                </div>
+              </div>
+            </div>
+            <p class="caption" id="sec3-b-cap"></p>
+          </div>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- ══ PANEL 4 — LIVE SITE ══ -->
-  <section class="p4 wrap reveal" id="p4">
-    <div class="p4-head">
-      <div class="label">And this is your site, right now</div>
-      <h2>Try booking a trial with yourself.</h2>
-      <p>Left is your website as it is today. Right is the same site with Ascend on it — go on, ask it something.</p>
+  <!-- ══ SECTION 04 — LIVE SITE ══ -->
+  <section class="p4 wrap cyc-section" id="p4" data-sec="4">
+    <div class="p4-head reveal">
+      <div class="sec-eyebrow" id="sec4-eyebrow"></div>
+      <h2 id="sec4-headline"></h2>
+      <p class="hard-fact" id="sec4-fact"></p>
     </div>
-    <div class="p4-grid">
+    <div class="mtoggle" role="tablist" aria-label="Toggle view">
+      <button class="pill active" type="button" data-side="left" id="sec4-pill-a"></button>
+      <button class="pill" type="button" data-side="right" id="sec4-pill-b"></button>
+    </div>
+    <div class="p4-grid cyc-grid reveal">
       <!-- LEFT: site as-is -->
-      <div class="p4-col left">
-        <div class="side-tag" style="color:var(--text-faint)">Right now.</div>
+      <div class="p4-col left cyc-side active">
+        <div class="side-tag" id="sec4-a-sub" style="color:var(--text-faint)"></div>
         <div class="device">
           <div class="chrome">
             <div class="dots"><i></i><i></i><i></i></div>
@@ -635,12 +722,12 @@
             <div class="mock" id="mock-left"></div>
           </div>
         </div>
-        <p class="caption" style="text-align:left">Someone lands here at 11pm, ready to train. There's no way to book, so they message — and you're asleep.</p>
+        <p class="caption" id="sec4-a-cap" style="text-align:left"></p>
       </div>
 
       <!-- RIGHT: site with Ascend -->
-      <div class="p4-col right">
-        <div class="side-tag">With Ascend.</div>
+      <div class="p4-col right cyc-side">
+        <div class="side-tag" id="sec4-b-sub"></div>
         <div class="device">
           <div class="chrome">
             <div class="dots"><i></i><i></i><i></i></div>
@@ -702,7 +789,7 @@
             </button>
           </div>
         </div>
-        <p class="caption" style="text-align:left"><strong>Answered instantly, questions handled, booked into the right class.</strong> At 11pm, at 6am, while you're on the mat.</p>
+        <p class="caption" id="sec4-b-cap" style="text-align:left"></p>
       </div>
     </div>
     <div class="p4-cta">
@@ -712,9 +799,9 @@
 
   <!-- ══ CLOSING ══ -->
   <section class="closing wrap reveal">
-    <div class="label">What that difference is worth</div>
-    <div class="stat">+£70,000</div>
-    <p class="sub">Added to Nexus BJJ's annual bottom line in 90 days. <strong>Same ad spend. They just stopped leaking.</strong></p>
+    <div class="label" id="close-label"></div>
+    <div class="stat" id="close-stat"></div>
+    <p class="sub" id="close-sub"></p>
     <div class="fine">Ascend — Gym Incubator</div>
   </section>
 
@@ -725,6 +812,116 @@
     const VAPI_PUBLIC_KEY = 'a154a7cb-a164-4fd8-bf2d-6b3aaba450a0';
     const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (REDUCED) document.body.classList.add('no-motion');
+
+    // ══════════════════════════════════════════════════════════════════════
+    //  CONTENT — the single shared copy module.
+    //  Every user-facing string on the page lives here. Desktop (side-by-side)
+    //  and mobile (pill toggle) render the *same DOM* from this object, so the
+    //  two breakpoints can never show different copy. Change text here only.
+    // ══════════════════════════════════════════════════════════════════════
+    const CONTENT = {
+      hero: {
+        eyebrow: 'Ascend · For Martial Arts Academies',
+        h1: 'The members you lost last month never walked through the door.',
+        sub: 'They messaged at 11pm. They booked a trial and forgot. They trained, loved it, and nobody asked them to join. Four gaps between someone finding you and someone paying you — and you’re leaking through all four.',
+        proof: '**+£70,000** added to Nexus BJJ’s annual revenue in 90 days. Same ad spend, same coaches, same timetable. This exact system, nothing else changed.',
+        gaps: [
+          { num: '01', label: 'The 11pm enquiry', pain: 'Nobody replies until morning.' },
+          { num: '02', label: 'The booked trial', pain: 'No reminder. No show.' },
+          { num: '03', label: 'The trial that went well', pain: 'Nobody asked him to join.' },
+          { num: '04', label: 'Your website, right now', pain: 'No way to book, so they don’t.' }
+        ],
+        cue: 'Below: each gap as it probably looks in your academy right now, next to what it looks like once it’s fixed. Then we’ll do it live on your own website.'
+      },
+      sections: [
+        {
+          eyebrow: '01 · The 11pm Enquiry',
+          headline: 'The first academy to reply usually wins. It’s rarely the best one.',
+          fact: 'MIT and InsideSales tracked 15,000 enquiries and 100,000 follow-up attempts. Reply within five minutes and you’re 21 times more likely to qualify that person than if you reply at thirty minutes. Not thirty hours. Thirty minutes. Most academies take until the next morning.',
+          a: { pill: 'Your setup now', sub: 'Two days later.', cap: 'He enquired at 11pm, ready to start on Monday. Someone got back to him Wednesday. By then he’d joined the place down the road — they answered in two minutes.' },
+          b: { pill: 'Once it’s fixed', sub: 'Ninety seconds.', cap: '**Answered, questions handled, booked in** — before he’d put his phone down.' }
+        },
+        {
+          eyebrow: '02 · The Booked Trial',
+          headline: 'Booked is not the same as coming.',
+          fact: 'Across more than twenty controlled trials, a single reminder message cut no-shows by around 38%. And forgetting is only half of it — first-timers don’t turn up because they don’t know what to wear, whether they’ll get thrown in with blue belts, or whether they’ll be the only beginner in the room. Nobody asks that out loud. They just quietly don’t come.',
+          a: { pill: 'Your setup now', sub: 'Booked, then forgotten.', cap: 'Eight days between booking and Thursday. No reminder, no message, no contact. He didn’t show, and nobody chased.' },
+          b: { pill: 'Once it’s fixed', sub: 'Reminded, reassured, confirmed.', cap: 'A message the night before answering the questions he was too embarrassed to ask, and a thumbs up back. **You know who’s on the mat before you leave the house.**' }
+        },
+        {
+          eyebrow: '03 · The Trial That Went Well',
+          headline: 'He loved it. Nobody asked him to join.',
+          fact: 'Run 20 trials a month and sign 6 and you’re a 30% academy. Sign 11 and you’re at 55%. Same twenty people, same coaching, same mats. Five extra members a month at £90 is £5,400 a year in new recurring revenue — from one month’s trials. You do that twelve times a year. The gap is almost never the session. It’s that nobody asked on the night, and nobody followed up when they said they’d think about it.',
+          a: { pill: 'Your setup now', sub: 'Sat there for 18 days.', cap: 'He came, he enjoyed it, he went home. Eighteen days later he’s still sitting in your system marked “trial done” and not one person has spoken to him.' },
+          b: { pill: 'Once it’s fixed', sub: 'Asked the same night.', cap: 'Every trial gets the ask while it’s still fresh, and a follow-up if they go quiet. The ones who say no tell you why — **so you finally know your real numbers instead of guessing at them.** Even the ones who don’t turn up get chased. Two messages, and most of them rebook.' }
+        },
+        {
+          eyebrow: '04 · Your Website, Right Now',
+          headline: 'Try booking a trial on your own site. Go on.',
+          fact: 'Nearly everyone who looks you up does it on a phone, at night, off the back of an Instagram post or a mate’s recommendation. If the only option is a contact form that lands in an inbox you’ll read tomorrow, you’ve just asked them to wait — and waiting is exactly when they open a new tab and look at whoever’s next on Google.',
+          a: { pill: 'Your site as it is', sub: 'Right now.', cap: 'Someone lands here at 11pm ready to train. There’s no way to book and no one to ask, so they send a message into the void. You’re asleep.' },
+          b: { pill: 'Your site with Ascend', sub: 'With Ascend.', cap: '**Answered instantly, questions handled, booked into the right class.** At 11pm, at 6am, while you’re on the mat.' }
+        }
+      ],
+      closing: {
+        label: 'What that difference is worth',
+        stat: '+£70,000',
+        sub: 'Added to Nexus BJJ’s annual bottom line in 90 days. **Same ad spend. They just stopped leaking.**'
+      },
+      fallback: {
+        name: 'Martial Arts Placeholder Website',
+        disciplines: 'BJJ · Muay Thai · MMA',
+        body: 'We couldn’t capture your site automatically — some sites block screenshot tools, and sometimes the URL just doesn’t come through. This is a stand-in so you can still test the booking assistant on the right. Send us your URL and we’ll rebuild this page with your actual site on it.',
+        foot: 'Placeholder — not a real academy.'
+      }
+    };
+
+    // Tiny markdown: escape, then **bold** → <strong>.
+    function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
+    function md(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+    function setText(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
+    function setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+    // ── Render the shared copy into the page ──
+    function renderContent() {
+      const H = CONTENT.hero;
+      setText('hero-eyebrow', H.eyebrow);
+      setText('hero-h1', H.h1);
+      setHTML('hero-sub', md(H.sub));
+      setHTML('hero-proof', md(H.proof));
+      setText('hero-cue', H.cue);
+      const gaps = document.getElementById('hero-gaps');
+      if (gaps) {
+        gaps.innerHTML = '';
+        H.gaps.forEach(function (g, i) {
+          const btn = document.createElement('button');
+          btn.className = 'gap-cell'; btn.type = 'button';
+          btn.setAttribute('data-goto', String(i + 1));
+          btn.innerHTML = '<div class="gap-num">' + esc(g.num) + '</div><div class="gap-label">' + esc(g.label) + '</div><div class="gap-pain">' + esc(g.pain) + '</div>';
+          btn.addEventListener('click', function () {
+            const target = i < 3 ? document.querySelector('.cyc-section[data-sec="' + (i + 1) + '"]') : document.getElementById('p4');
+            if (target) target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+          });
+          gaps.appendChild(btn);
+        });
+      }
+      CONTENT.sections.forEach(function (s, idx) {
+        const n = idx + 1;
+        setText('sec' + n + '-eyebrow', s.eyebrow);
+        setText('sec' + n + '-headline', s.headline);
+        setText('sec' + n + '-fact', s.fact);
+        setText('sec' + n + '-a-sub', s.a.sub);
+        setHTML('sec' + n + '-a-cap', md(s.a.cap));
+        setText('sec' + n + '-b-sub', s.b.sub);
+        setHTML('sec' + n + '-b-cap', md(s.b.cap));
+        setText('sec' + n + '-pill-a', s.a.pill);
+        setText('sec' + n + '-pill-b', s.b.pill);
+      });
+      setText('close-label', CONTENT.closing.label);
+      setText('close-stat', CONTENT.closing.stat);
+      setHTML('close-sub', md(CONTENT.closing.sub));
+    }
+    renderContent();
 
     // ── URL params ──
     const p = new URLSearchParams(location.search);
@@ -790,6 +987,80 @@
       }, { threshold: 0.28 });
       document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
     }
+
+    // ══════════ MOBILE PILL TOGGLE + AUTO-CYCLE ══════════
+    // One panel at a time on mobile. Sequence per section (independent):
+    //   Your setup now (5s) → Once it's fixed (8s) → Your setup now (8s) → alternate at 8s.
+    // Starts the first time the section crosses 55% visible. Pauses under 30%,
+    // resumes from where it paused. A pill tap kills the timer permanently.
+    // prefers-reduced-motion → no auto-cycle; defaults to the left panel; manual toggle only.
+    function initToggles() {
+      const mq = window.matchMedia('(max-width: 860px)');
+      const isMobile = function () { return mq.matches; };
+      const controllers = [];
+
+      document.querySelectorAll('.cyc-section').forEach(function (secEl) {
+        const sides = {
+          left: secEl.querySelector('.cyc-side.left'),
+          right: secEl.querySelector('.cyc-side.right')
+        };
+        const pills = Array.prototype.slice.call(secEl.querySelectorAll('.pill'));
+        const st = { started: false, killed: false, paused: false, idx: 0, timer: null, cur: 'left' };
+
+        function setActive(side) {
+          st.cur = side;
+          if (sides.left) sides.left.classList.toggle('active', side === 'left');
+          if (sides.right) sides.right.classList.toggle('active', side === 'right');
+          pills.forEach(function (pl) {
+            const on = pl.getAttribute('data-side') === side;
+            pl.classList.toggle('active', on);
+            pl.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+        }
+        function clearT() { if (st.timer) { clearTimeout(st.timer); st.timer = null; } }
+        function step(n) { return { side: (n % 2 === 0) ? 'left' : 'right', hold: (n === 0) ? 5000 : 8000 }; }
+        function run() {
+          if (st.killed || st.paused || REDUCED || !isMobile()) return;
+          const s = step(st.idx);
+          setActive(s.side);
+          clearT();
+          st.timer = setTimeout(function () { st.idx++; run(); }, s.hold);
+        }
+        function start() { if (st.started || st.killed) return; st.started = true; st.idx = 0; run(); }
+        function pause() { if (!st.started || st.killed || st.paused) return; st.paused = true; clearT(); }
+        function resume() { if (!st.started || st.killed || !st.paused) return; st.paused = false; run(); }
+        function kill(side) { st.killed = true; clearT(); if (side) setActive(side); }
+
+        pills.forEach(function (pl) {
+          pl.addEventListener('click', function () { kill(pl.getAttribute('data-side')); });
+        });
+
+        controllers.push({ secEl: secEl, sec: secEl.getAttribute('data-sec'), start: start, pause: pause, resume: resume, kill: kill, st: st });
+      });
+
+      if (!REDUCED) {
+        const io2 = new IntersectionObserver(function (entries) {
+          if (!isMobile()) return;
+          entries.forEach(function (e) {
+            const c = controllers.filter(function (x) { return x.secEl === e.target; })[0];
+            if (!c) return;
+            if (e.intersectionRatio >= 0.55) {
+              if (!c.st.started) c.start(); else if (c.st.paused) c.resume();
+            } else if (e.intersectionRatio < 0.30) {
+              c.pause();
+            }
+          });
+        }, { threshold: [0, 0.3, 0.55, 1] });
+        controllers.forEach(function (c) { io2.observe(c.secEl); });
+      }
+
+      // Opening the chat on the live-site section counts as a user override for that section.
+      window.__killP4Cycle = function () {
+        const c = controllers.filter(function (x) { return x.sec === '4'; })[0];
+        if (c && !c.st.killed) c.kill('right');
+      };
+    }
+    initToggles();
 
     // ══════════ PANEL 1 — chat threads ══════════
     const LEFT_THREAD = [
@@ -884,8 +1155,8 @@
         const target = parseInt(c.getAttribute('data-count'), 10);
         if (instant) { c.textContent = target; return; }
         let v = 0;
-        const step = Math.max(1, Math.round(target / 22));
-        const iv = setInterval(function () { v += step; if (v >= target) { v = target; clearInterval(iv); } c.textContent = v; }, 42);
+        const stepv = Math.max(1, Math.round(target / 22));
+        const iv = setInterval(function () { v += stepv; if (v >= target) { v = target; clearInterval(iv); } c.textContent = v; }, 42);
       });
       // Right: cards slide in left-to-right, in order, so movement reads as progress.
       const cards = Array.prototype.slice.call(document.querySelectorAll('#board-right .kard'))
@@ -911,18 +1182,21 @@
         mock.innerHTML = mockSiteHTML();
         mock.classList.add('show');
         document.getElementById('load-' + side).classList.add('gone');
+        // No URL → keep an obviously neutral placeholder domain, never invent an academy.
         const dom = document.getElementById('dom-' + side);
-        if (!gymUrl) dom.textContent = (company.toLowerCase().replace(/[^a-z0-9]+/g, '') || 'youracademy') + '.co.uk';
+        if (!gymUrl) dom.textContent = 'your-website.com';
       });
     }
 
+    // Placeholder site — styled like a real site (same chrome/layout) but it must never
+    // look like a real academy that isn't theirs.
     function mockSiteHTML() {
-      const name = company === 'Your Academy' ? 'Ironside Martial Arts' : company;
+      const F = CONTENT.fallback;
       return '' +
         '<div class="mock-hero">' +
-          '<div class="mock-kicker">BJJ · Muay Thai · MMA</div>' +
-          '<div class="mock-h1">' + esc(name) + '</div>' +
-          '<div class="mock-sub">Train with a community that pushes you. Beginner-friendly classes seven days a week.</div>' +
+          '<div class="mock-kicker">' + esc(F.disciplines) + '</div>' +
+          '<div class="mock-h1">' + esc(F.name) + '</div>' +
+          '<div class="mock-sub">' + esc(F.body) + '</div>' +
           '<span class="mock-cta">Start Free Trial</span>' +
         '</div>' +
         '<div class="mock-row">' +
@@ -936,7 +1210,8 @@
           '<div class="mock-slot"><span>Open Mat</span><span>Wed · 6:30 PM</span></div>' +
           '<div class="mock-slot"><span>Intro Class</span><span>Thu · 6:00 PM</span></div>' +
           '<div class="mock-slot"><span>Kids MMA</span><span>Sat · 10:00 AM</span></div>' +
-        '</div>';
+        '</div>' +
+        '<div class="mock-foot"><span>' + esc(F.foot) + '</span></div>';
     }
 
     function loadShot(side) {
@@ -983,7 +1258,6 @@
     }
 
     // ── chat plumbing ──
-    function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
     function showScreen(id) { document.querySelectorAll('#cpanel .screen').forEach(function (s) { s.classList.remove('active'); }); document.getElementById('screen-' + id).classList.add('active'); }
 
     window.toggleChat = function () {
@@ -991,6 +1265,8 @@
       document.getElementById('ibb').classList.toggle('open', chatOpen);
       document.getElementById('cpanel').classList.toggle('open', chatOpen);
       document.getElementById('ibb-badge').classList.add('hidden');
+      // On mobile, opening the chat pins the live-site section to the Ascend panel.
+      if (chatOpen && typeof window.__killP4Cycle === 'function') window.__killP4Cycle();
     };
     window.selectMode = function (mode) {
       selectedMode = mode;
@@ -1000,6 +1276,7 @@
     window.backToMode = function () { document.getElementById('cp-msgs').innerHTML = ''; history.length = 0; selectedMode = null; showScreen('mode'); };
     window.bookTrial = function () {
       track('cta_click');
+      if (typeof window.__killP4Cycle === 'function') window.__killP4Cycle();
       if (!chatOpen) toggleChat();
       selectMode('chat');
       document.getElementById('p4').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
