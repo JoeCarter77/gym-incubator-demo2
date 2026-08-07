@@ -115,7 +115,7 @@
     /* Sparse green accent — one glowing phrase per block. */
     .hl { color: var(--lime); font-weight: 600; }
 
-    /* ── HERO ── (tightened — no dead space; lower half carries the four-gap grid) */
+    /* ── HERO ── (fits within one viewport; modest breathing room before SCROLL) */
     /* padding-top/bottom only — never shorthand — so .wrap's horizontal padding survives on mobile. */
     .hero { padding-top: 96px; padding-bottom: 48px; }
     .eyebrow {
@@ -144,19 +144,8 @@
     }
     .proof-bar .hl { font-weight: 800; margin-right: 6px; }
 
-    /* Four-gap preview grid — big green number, label below, no descriptions. */
-    .gap-grid { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .gap-cell {
-      border: 1px solid var(--border); background: rgba(255,255,255,0.015); border-radius: var(--radius-sm);
-      padding: 18px 16px; cursor: pointer; text-align: left; font-family: inherit; color: inherit;
-      transition: border-color var(--d-micro) var(--ease), transform var(--d-micro) var(--ease), background var(--d-micro) var(--ease);
-    }
-    .gap-cell:hover { border-color: var(--lime-bd); transform: translateY(-3px); background: rgba(180,255,0,0.04); }
-    .gap-num { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.03em; color: var(--lime); font-variant-numeric: tabular-nums; line-height: 1; }
-    .gap-label { margin-top: 12px; font-size: 0.86rem; font-weight: 700; color: var(--text); }
-
     /* Scroll cue — animated green bar + SCROLL, nothing else. */
-    .scroll-cue { margin-top: 40px; display: inline-flex; align-items: center; gap: 13px; }
+    .scroll-cue { margin-top: 64px; display: inline-flex; align-items: center; gap: 13px; }
     .scroll-cue .bar { position: relative; width: 3px; height: 42px; background: rgba(180,255,0,0.16); border-radius: 3px; overflow: hidden; }
     .scroll-cue .bar::after {
       content: ''; position: absolute; left: 0; right: 0; top: 0; height: 45%;
@@ -215,9 +204,9 @@
     .side.left .frame  { background: #0e0e0e; border-color: var(--hair); }
     .side.right .frame { background: var(--card); }
 
-    /* Enquiry-handling chat panels are height-capped so they never dwarf the panel beside them
-       and always fit comfortably in under 70% of the viewport. */
-    .panel[data-panel="1"] .frame { min-height: 0; height: clamp(300px, 52vh, 430px); }
+    /* Enquiry-handling chat component scaled to 60% — height-capped so it never dwarfs the
+       panel beside it. Same messages, nothing cut. */
+    .panel[data-panel="1"] .frame { min-height: 0; height: clamp(180px, 31vh, 258px); }
 
     .caption {
       margin-top: 18px; font-size: 0.86rem; line-height: 1.62; font-weight: 300;
@@ -227,25 +216,25 @@
     .side.right .caption { color: var(--text-dim); }
     .side.right .caption strong { color: var(--text); font-weight: 500; }
 
-    /* ══════════ PANEL 1 — CHAT THREADS ══════════ */
-    .thread { display: flex; flex-direction: column; gap: 8px; padding: 18px 16px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #282828 transparent; }
-    .thread::-webkit-scrollbar { width: 3px; }
+    /* ══════════ PANEL 1 — CHAT THREADS (scaled to 60%) ══════════ */
+    .thread { display: flex; flex-direction: column; gap: 5px; padding: 11px 10px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #282828 transparent; }
+    .thread::-webkit-scrollbar { width: 2px; }
     .thread::-webkit-scrollbar-thumb { background: #282828; border-radius: 2px; }
-    .t-divider { text-align: center; font-size: 0.66rem; color: var(--text-faint); margin: 4px 0 2px; font-weight: 500; }
+    .t-divider { text-align: center; font-size: 0.4rem; color: var(--text-faint); margin: 2px 0 1px; font-weight: 500; }
     .side.left .t-divider { color: var(--text-ghost); }
-    .t-ts { text-align: center; font-size: 11px; color: var(--text-ghost); margin: 4px 0 0; font-weight: 500; letter-spacing: 0.02em; }
+    .t-ts { text-align: center; font-size: 7px; color: var(--text-ghost); margin: 2px 0 0; font-weight: 500; letter-spacing: 0.02em; }
     .t-row { display: flex; }
     .t-row.out { justify-content: flex-end; }
     .t-row.in  { justify-content: flex-start; }
-    /* ~15px desktop / ~14px mobile bubbles, 10px 14px padding */
-    .t-bubble { max-width: 80%; padding: 10px 14px; font-size: 15px; line-height: 1.42; border-radius: 17px; }
-    .t-row.out .t-bubble { background: #0a84ff; color: #fff; border-bottom-right-radius: 5px; }
-    .t-row.in  .t-bubble { background: #262628; color: #eaeaea; border-bottom-left-radius: 5px; }
+    /* 60% of the previous ~15px bubbles / 10px 14px padding */
+    .t-bubble { max-width: 80%; padding: 6px 8px; font-size: 9px; line-height: 1.42; border-radius: 10px; }
+    .t-row.out .t-bubble { background: #0a84ff; color: #fff; border-bottom-right-radius: 3px; }
+    .t-row.in  .t-bubble { background: #262628; color: #eaeaea; border-bottom-left-radius: 3px; }
     .side.left .t-row.out .t-bubble { background: #2c4a6b; color: #b8c6d4; } /* muted, lifeless */
-    .t-seen { text-align: right; font-size: 11px; color: var(--text-faint); padding: 2px 4px 0; font-weight: 500; }
+    .t-seen { text-align: right; font-size: 7px; color: var(--text-faint); padding: 1px 2px 0; font-weight: 500; }
     .side.left .t-seen { color: var(--text-ghost); }
-    .t-typing { display: inline-flex; gap: 4px; align-items: center; background: #262628; padding: 12px 14px; border-radius: 17px; border-bottom-left-radius: 5px; }
-    .t-typing i { width: 6px; height: 6px; border-radius: 50%; background: #6a6a6c; display: block; animation: tdot 1.1s ease infinite; }
+    .t-typing { display: inline-flex; gap: 2px; align-items: center; background: #262628; padding: 7px 8px; border-radius: 10px; border-bottom-left-radius: 3px; }
+    .t-typing i { width: 4px; height: 4px; border-radius: 50%; background: #6a6a6c; display: block; animation: tdot 1.1s ease infinite; }
     .t-typing i:nth-child(2) { animation-delay: 0.16s; }
     .t-typing i:nth-child(3) { animation-delay: 0.32s; }
     .anim-item { animation: bubbleIn 0.32s var(--ease) both; }
@@ -334,6 +323,9 @@
     .p4-head .hard-fact { margin-top: 20px; }
     .p4-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
     .p4-col .side-tag { margin-bottom: 14px; }
+    /* POWERED BY ASCEND — label above the single site mock. */
+    #sec4-b-sub { text-transform: uppercase; letter-spacing: 0.16em; color: var(--lime); font-size: 0.62rem; }
+    #sec4-b-sub::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px var(--lime); flex-shrink: 0; }
 
     .device {
       background: #0b0b0b; border: 1px solid var(--border-hi); border-radius: var(--radius);
@@ -357,21 +349,21 @@
     .viewport .loading p { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .p4-cta { text-align: center; margin-top: 34px; }
-    .book-btn {
-      display: inline-flex; align-items: center; gap: 9px;
-      background: var(--lime); color: #000; font-family: inherit; font-size: 1.02rem; font-weight: 800;
-      letter-spacing: -0.01em; padding: 16px 30px; border: none; border-radius: 11px; cursor: pointer;
-      text-decoration: none; transition: transform var(--d-micro) var(--ease), box-shadow var(--d-micro) var(--ease);
-      animation: bookPulse 2.4s ease infinite;
+    /* Section 04 single-panel layout */
+    .p4-solo { max-width: 560px; }
+
+    /* ══════════ CLOSING — NEXUS CASE STUDY ══════════ */
+    .case { text-align: center; padding-top: 110px; padding-bottom: 40px; }
+    .case-label { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-faint); }
+    /* +£70,000 — biggest type on the page. */
+    .case-stat {
+      margin-top: 24px; font-size: clamp(5rem, 17vw, 12rem); font-weight: 800; letter-spacing: -0.05em;
+      line-height: 0.88; color: var(--lime); text-shadow: 0 0 60px rgba(180,255,0,0.35);
     }
-    .book-btn:hover { transform: translateY(-2px); background: var(--lime-hi); }
-    .book-btn:active { transform: translateY(0); }
-    .no-motion .book-btn { animation: none; }
-    @keyframes bookPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(170,255,0,0.0); }
-      50% { box-shadow: 0 0 0 12px rgba(170,255,0,0.0), 0 0 34px 2px rgba(170,255,0,0.28); }
-    }
+    .case-sub { margin-top: 18px; font-size: clamp(1.05rem, 2vw, 1.4rem); font-weight: 500; color: var(--text); }
+    .case-body { margin: 22px auto 0; max-width: 60ch; font-size: 1rem; font-weight: 300; line-height: 1.7; color: var(--text-dim); }
+    .case-divider { width: 60px; height: 2px; background: var(--border-hi); margin: 48px auto 0; border-radius: 2px; }
+    .cta-text { margin: 40px auto 0; max-width: 48ch; font-size: clamp(1.1rem, 2.1vw, 1.45rem); font-weight: 500; line-height: 1.5; color: var(--text); padding-bottom: 110px; }
 
     /* ══════════ MOCK SITE FALLBACK (placeholder — never a fake academy) ══════════ */
     .mock { position: absolute; inset: 0; overflow-y: auto; background: #0f1115; color: #e8e8ea; display: none; }
@@ -506,16 +498,17 @@
       header { padding: 0 20px; }
       .progress-rail { padding: 10px 20px 14px; gap: 7px; }
       .hero { padding-top: 92px; padding-bottom: 44px; }
-      .gap-grid { grid-template-columns: 1fr 1fr; }
       .p4-grid, .panel-grid { grid-template-columns: 1fr; gap: 16px; }
       .panel { padding: 16px 0 40px; }
       .frame { min-height: 236px; }
-      .panel[data-panel="1"] .frame { height: clamp(280px, 56vh, 420px); }
+      .panel[data-panel="1"] .frame { height: clamp(170px, 34vh, 252px); }
       .side { margin-bottom: 4px; }
       .caption { min-height: 0; margin-bottom: 8px; }
-      .t-bubble { font-size: 14px; }
-      .p4 { padding-top: 44px; padding-bottom: 64px; }
-      .p4-grid { gap: 24px; }
+      .t-bubble { font-size: 8.5px; }
+      .p4 { padding-top: 44px; padding-bottom: 56px; }
+      .case { padding-top: 72px; }
+      .case-divider { margin-top: 36px; }
+      .cta-text { padding-bottom: 80px; }
       .board { grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 12px 8px; }
       .col-head { font-size: 0.42rem; }
       .kard { padding: 6px 4px; }
@@ -577,8 +570,7 @@
     <div class="eyebrow h-anim h-2"><span class="dot"></span><span id="hero-eyebrow"></span></div>
     <h1 class="h-anim h-3" id="hero-h1"></h1>
     <p class="subhead h-anim h-3" id="hero-sub"></p>
-    <div class="gap-grid h-anim h-4" id="hero-gaps"></div>
-    <div class="scroll-cue h-anim h-5">
+    <div class="scroll-cue h-anim h-4">
       <div class="bar"></div>
       <div class="lbl">SCROLL</div>
     </div>
@@ -744,37 +736,16 @@
     </section>
   </div>
 
-  <!-- ══ SECTION 04 — LIVE SITE ══ -->
-  <section class="p4 wrap cyc-section" id="p4" data-sec="4">
+  <!-- ══ SECTION 04 — LIVE SITE (single state, no toggle) ══ -->
+  <section class="p4 wrap" id="p4">
     <div class="p4-head reveal">
       <div class="sec-eyebrow" id="sec4-eyebrow"></div>
       <h2 id="sec4-headline"></h2>
       <p class="hard-fact" id="sec4-fact"></p>
     </div>
-    <div class="mtoggle" role="tablist" aria-label="Toggle view">
-      <button class="pill active" type="button" data-side="left" id="sec4-pill-a"></button>
-      <button class="pill" type="button" data-side="right" id="sec4-pill-b"></button>
-    </div>
-    <div class="p4-grid cyc-grid reveal">
-      <!-- LEFT: site as-is -->
-      <div class="p4-col left cyc-side active">
-        <div class="side-tag" id="sec4-a-sub" style="color:var(--text-faint)"></div>
-        <div class="device">
-          <div class="chrome">
-            <div class="dots"><i></i><i></i><i></i></div>
-            <div class="addr"><span class="lock">🔒</span><span class="dom" id="dom-left">yourwebsite.com</span></div>
-          </div>
-          <div class="viewport" id="vp-left">
-            <div class="loading" id="load-left"><div class="spin"></div><p>Capturing your site…</p></div>
-            <img class="shot" id="shot-left" alt="Your website" />
-            <div class="mock" id="mock-left"></div>
-          </div>
-        </div>
-        <p class="caption" id="sec4-a-cap" style="text-align:left"></p>
-      </div>
-
-      <!-- RIGHT: site with Ascend -->
-      <div class="p4-col right cyc-side">
+    <div class="p4-solo reveal">
+      <!-- Only the working version remains -->
+      <div class="p4-col right">
         <div class="side-tag" id="sec4-b-sub"></div>
         <div class="device">
           <div class="chrome">
@@ -841,9 +812,16 @@
         <p class="caption" id="sec4-b-cap" style="text-align:left"></p>
       </div>
     </div>
-    <div class="p4-cta">
-      <button class="book-btn" id="book-btn" onclick="bookTrial()">Book a trial <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-    </div>
+  </section>
+
+  <!-- ══ CLOSING — NEXUS CASE STUDY ══ -->
+  <section class="case wrap reveal">
+    <div class="case-label" id="case-label"></div>
+    <div class="case-stat" id="case-stat"></div>
+    <div class="case-sub" id="case-sub"></div>
+    <p class="case-body" id="case-body"></p>
+    <div class="case-divider"></div>
+    <p class="cta-text" id="cta-text"></p>
   </section>
 
   <script>
@@ -865,17 +843,11 @@
     const CONTENT = {
       hero: {
         proof: '**+£70,000** to Nexus BJJ in 90 days.',
-        sub: 'Scroll through, then try the booking assistant on your own site at the bottom.',
-        gaps: [
-          { num: '01', label: 'The 11pm enquiry' },
-          { num: '02', label: 'The booked trial' },
-          { num: '03', label: 'The trial that went well' },
-          { num: '04', label: 'Your website' }
-        ]
+        sub: 'Scroll through, then try the booking assistant on your own site at the bottom.'
       },
       sections: [
         {
-          eyebrow: '01 · THE 11PM ENQUIRY',
+          eyebrow: '01 · ENQUIRY HANDLING',
           headline: 'They didn’t pick the best academy. They picked the one that answered.',
           line: 'Reply in five minutes instead of thirty and you’re **21x more likely** to sign them.',
           a: { pill: 'Now', sub: 'Two days later.', cap: 'He enquired at 11pm and by the time anyone replied, he’d joined the place down the road.' },
@@ -889,7 +861,7 @@
           b: { pill: 'Fixed', sub: 'Reminded and reassured.', cap: 'A message the night before answering what he was too embarrassed to ask, and **a thumbs up back.**' }
         },
         {
-          eyebrow: '03 · THE TRIAL THAT WENT WELL',
+          eyebrow: '03 · NO CLEAR SALES PROCESS',
           headline: 'He loved it. Then nothing happened.',
           line: '20 trials a month at 30% instead of 55% is **five members** you’re leaving behind, every month.',
           a: { pill: 'Now', sub: 'Sat there for 18 days.', cap: 'Someone probably asked how he found it, but no follow-up went out, no offer was made, and nothing was ever sent.' },
@@ -899,10 +871,15 @@
           eyebrow: '04 · YOUR WEBSITE, RIGHT NOW',
           headline: 'This is your site with an assistant already trained on it.',
           line: 'Message it or call it and try booking a session, exactly like one of your leads would.',
-          a: { pill: 'Now', sub: 'Right now.', cap: 'Someone lands here at 11pm ready to train, finds no way to book, and you’re asleep.' },
-          b: { pill: 'Fixed', sub: 'With Ascend.', cap: '**Answered instantly** and booked into the right class, at 11pm, at 6am, while you’re on the mat.' }
+          b: { sub: 'POWERED BY ASCEND', cap: '**Answered instantly** and booked into the right class, at 11pm, at 6am, while you’re on the mat.' }
         }
       ],
+      caseStudy: {
+        label: 'What that difference is worth',
+        stat: '+£70,000',
+        sub: 'Added to Nexus BJJ’s annual revenue in 90 days.',
+        body: 'We closed these four gaps first, then optimised their offer, rebuilt their booking journey, and ran reactivation on their old leads. Same ad spend, same coaches, same timetable.'
+      },
       fallback: {
         name: 'Martial Arts Placeholder Website',
         disciplines: 'BJJ · Muay Thai · MMA',
@@ -933,32 +910,28 @@
       setText('hero-eyebrow', 'MADE FOR ' + (academy || 'YOUR ACADEMY'));
       setText('hero-h1', firstName ? firstName + ', there are four gaps losing you members.' : 'There are four gaps losing you members.');
       setText('hero-sub', H.sub);
-      const gaps = document.getElementById('hero-gaps');
-      if (gaps) {
-        gaps.innerHTML = '';
-        H.gaps.forEach(function (g, i) {
-          const btn = document.createElement('button');
-          btn.className = 'gap-cell'; btn.type = 'button';
-          btn.innerHTML = '<div class="gap-num">' + esc(g.num) + '</div><div class="gap-label">' + esc(g.label) + '</div>';
-          btn.addEventListener('click', function () {
-            const target = i < 3 ? document.querySelector('.cyc-section[data-sec="' + (i + 1) + '"]') : document.getElementById('p4');
-            if (target) target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
-          });
-          gaps.appendChild(btn);
-        });
-      }
       CONTENT.sections.forEach(function (s, idx) {
         const n = idx + 1;
         setText('sec' + n + '-eyebrow', s.eyebrow);
         setText('sec' + n + '-headline', s.headline);
         setHTML('sec' + n + '-fact', md(s.line));
-        setText('sec' + n + '-a-sub', s.a.sub);
-        setHTML('sec' + n + '-a-cap', md(s.a.cap));
+        if (s.a) {
+          setText('sec' + n + '-a-sub', s.a.sub);
+          setHTML('sec' + n + '-a-cap', md(s.a.cap));
+          setText('sec' + n + '-pill-a', s.a.pill);
+        }
         setText('sec' + n + '-b-sub', s.b.sub);
         setHTML('sec' + n + '-b-cap', md(s.b.cap));
-        setText('sec' + n + '-pill-a', s.a.pill);
         setText('sec' + n + '-pill-b', s.b.pill);
       });
+      // Closing case study
+      const C = CONTENT.caseStudy;
+      setText('case-label', C.label);
+      setText('case-stat', C.stat);
+      setText('case-sub', C.sub);
+      setText('case-body', C.body);
+      // Text CTA — they're already in a message thread with us; academy token has a fallback.
+      setText('cta-text', 'Want to know what this would be worth for ' + (academy || 'your academy') + '? Just reply to the message this came from.');
     }
     renderContent();
 
@@ -966,8 +939,7 @@
     document.getElementById('mode-name').textContent = company;
     if (gymUrl) {
       const clean = gymUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
-      document.getElementById('dom-left').textContent = clean;
-      document.getElementById('dom-right').textContent = clean;
+      const dr = document.getElementById('dom-right'); if (dr) dr.textContent = clean;
     }
 
     // ── Link-open tracking (fire-and-forget; no-op server-side if unconfigured) ──
@@ -1037,7 +1009,10 @@
           right: secEl.querySelector('.cyc-side.right')
         };
         const pills = Array.prototype.slice.call(secEl.querySelectorAll('.pill'));
-        const st = { started: false, killed: false, paused: false, idx: 0, timer: null, cur: 'left' };
+        // Fires once: 'Your setup now' → after 14s → 'Once it's fixed', then stops for good.
+        // A pill click kills it permanently; pause/resume preserves the remaining time.
+        const SWITCH_MS = 14000;
+        const st = { started: false, killed: false, paused: false, phase: 0, timer: null, remaining: SWITCH_MS, startedAt: 0, cur: 'left' };
 
         function setActive(side) {
           st.cur = side;
@@ -1050,16 +1025,23 @@
           });
         }
         function clearT() { if (st.timer) { clearTimeout(st.timer); st.timer = null; } }
-        function step(n) { return { side: (n % 2 === 0) ? 'left' : 'right', hold: (n === 0) ? 5000 : 8000 }; }
         function run() {
           if (st.killed || st.paused || REDUCED || !isMobile()) return;
-          const s = step(st.idx);
-          setActive(s.side);
-          clearT();
-          st.timer = setTimeout(function () { st.idx++; run(); }, s.hold);
+          if (st.phase === 0) {
+            setActive('left');
+            clearT();
+            st.startedAt = Date.now();
+            st.timer = setTimeout(function () { st.timer = null; st.phase = 1; setActive('right'); }, st.remaining);
+          } else {
+            setActive('right'); // switched already — hold here permanently
+          }
         }
-        function start() { if (st.started || st.killed) return; st.started = true; st.idx = 0; run(); }
-        function pause() { if (!st.started || st.killed || st.paused) return; st.paused = true; clearT(); }
+        function start() { if (st.started || st.killed) return; st.started = true; st.phase = 0; st.remaining = SWITCH_MS; run(); }
+        function pause() {
+          if (!st.started || st.killed || st.paused) return;
+          st.paused = true;
+          if (st.timer) { st.remaining = Math.max(0, st.remaining - (Date.now() - st.startedAt)); clearT(); }
+        }
         function resume() { if (!st.started || st.killed || !st.paused) return; st.paused = false; run(); }
         function kill(side) { st.killed = true; clearT(); if (side) setActive(side); }
 
@@ -1086,11 +1068,6 @@
         controllers.forEach(function (c) { io2.observe(c.secEl); });
       }
 
-      // Opening the chat on the live-site section counts as a user override for that section.
-      window.__killP4Cycle = function () {
-        const c = controllers.filter(function (x) { return x.sec === '4'; })[0];
-        if (c && !c.st.killed) c.kill('right');
-      };
     }
     initToggles();
 
@@ -1098,8 +1075,14 @@
     // Each bar fills as its section travels through the viewport, top to bottom.
     (function initProgress() {
       const segs = Array.prototype.slice.call(document.querySelectorAll('.progress-seg'));
-      const secs = Array.prototype.slice.call(document.querySelectorAll('.cyc-section'));
-      if (!segs.length || !secs.length) return;
+      // Four bars track the four sections: 01–03 (cyc-sections) plus 04 (#p4).
+      const secs = [
+        document.querySelector('.cyc-section[data-sec="1"]'),
+        document.querySelector('.cyc-section[data-sec="2"]'),
+        document.querySelector('.cyc-section[data-sec="3"]'),
+        document.getElementById('p4')
+      ];
+      if (!segs.length) return;
       let raf = 0;
       function update() {
         raf = 0;
@@ -1239,15 +1222,14 @@
     function useMock() {
       if (usedMock) return;
       usedMock = true;
-      ['left', 'right'].forEach(function (side) {
-        const mock = document.getElementById('mock-' + side);
-        mock.innerHTML = mockSiteHTML();
-        mock.classList.add('show');
-        document.getElementById('load-' + side).classList.add('gone');
-        // No URL → keep an obviously neutral placeholder domain, never invent an academy.
-        const dom = document.getElementById('dom-' + side);
-        if (!gymUrl) dom.textContent = 'your-website.com';
-      });
+      const mock = document.getElementById('mock-right');
+      if (!mock) return;
+      mock.innerHTML = mockSiteHTML();
+      mock.classList.add('show');
+      const ldr = document.getElementById('load-right'); if (ldr) ldr.classList.add('gone');
+      // No URL → keep an obviously neutral placeholder domain, never invent an academy.
+      const dom = document.getElementById('dom-right');
+      if (!gymUrl && dom) dom.textContent = 'your-website.com';
     }
 
     // Placeholder site — styled like a real site (same chrome/layout) but it must never
@@ -1279,9 +1261,9 @@
     function loadShot(side) {
       const img = document.getElementById('shot-' + side);
       const ldr = document.getElementById('load-' + side);
+      if (!img || !ldr) return;
       if (!gymUrl) { useMock(); return; }
       let done = false;
-      const w = side === 'left' ? 1280 : 1280;
       const timer = setTimeout(function () {
         if (done) return; done = true; img.src = ''; useMock();
       }, 8000);
@@ -1292,9 +1274,8 @@
         ldr.classList.add('gone'); img.style.display = 'block';
       };
       img.onerror = function () { if (done) return; done = true; clearTimeout(timer); useMock(); };
-      img.src = 'https://image.thum.io/get/width/' + w + '/crop/1000/noanimate/' + gymUrl;
+      img.src = 'https://image.thum.io/get/width/1280/crop/1000/noanimate/' + gymUrl;
     }
-    loadShot('left');
     loadShot('right');
 
     // ── Scrape & train (graceful: chat is usable immediately, upgraded if scrape returns) ──
@@ -1328,8 +1309,6 @@
       document.getElementById('cpanel').classList.toggle('open', chatOpen);
       document.getElementById('ibb-badge').classList.add('hidden');
       const hint = document.getElementById('ibb-hint'); if (hint) hint.classList.toggle('hidden', chatOpen);
-      // On mobile, opening the chat pins the live-site section to the Ascend panel.
-      if (chatOpen && typeof window.__killP4Cycle === 'function') window.__killP4Cycle();
     };
     window.selectMode = function (mode) {
       selectedMode = mode;
@@ -1337,13 +1316,6 @@
       else { showScreen('chat'); initChat(); }
     };
     window.backToMode = function () { document.getElementById('cp-msgs').innerHTML = ''; history.length = 0; selectedMode = null; showScreen('mode'); };
-    window.bookTrial = function () {
-      track('cta_click');
-      if (typeof window.__killP4Cycle === 'function') window.__killP4Cycle();
-      if (!chatOpen) toggleChat();
-      selectMode('chat');
-      document.getElementById('p4').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
-    };
 
     function buildSystemPrompt(mode) {
       const ctx = gymContext ? '\n\n--- WEBSITE CONTENT ---\n' + gymContext.slice(0, 8000) + '\n--- END ---' : '';
